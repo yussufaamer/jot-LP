@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JOT — The voice memory app that thinks with you</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0E0E10;--surface:#1B1B1D;--s2:#252527;--s3:#2C2C2E;
+  --border:#2A2A2E;--border2:#3A3A3C;
+  --muted:#94A3B8;--muted2:#64748B;
+  --purple:#A855F7;--indigo:#6366F1;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:white;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+.g{background:linear-gradient(135deg,#A855F7,#6366F1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-items:center;justify-content:space-between;padding:20px 48px;transition:all .25s;}
+nav.scrolled{background:rgba(14,14,16,.94);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);}
+.nav-logo{font-size:17px;font-weight:500;letter-spacing:3px;}
+.nav-cta{background:linear-gradient(135deg,#A855F7,#6366F1);border:none;color:white;padding:10px 22px;border-radius:100px;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;box-shadow:0 4px 20px rgba(168,85,247,0.3);transition:opacity .15s,transform .15s;}
+.nav-cta:hover{opacity:.88;transform:translateY(-1px);}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;padding:140px 24px 80px;}
+.hero-glow{position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);width:800px;height:600px;background:radial-gradient(ellipse,rgba(168,85,247,0.09) 0%,transparent 65%);pointer-events:none;}
+.hero-wordmark{font-size:clamp(80px,16vw,160px);font-weight:500;letter-spacing:12px;line-height:1;margin-bottom:32px;opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease;}
+.hero-wordmark.visible{opacity:1;transform:translateY(0);}
+.hero-tagline{font-size:clamp(18px,3vw,26px);font-weight:400;color:var(--muted);line-height:1.5;max-width:520px;margin-bottom:48px;opacity:0;transform:translateY(16px);transition:opacity .6s ease .25s,transform .6s ease .25s;}
+.hero-tagline.visible{opacity:1;transform:translateY(0);}
+.hero-form{display:flex;flex-direction:column;gap:10px;width:100%;max-width:380px;opacity:0;transform:translateY(12px);transition:opacity .6s ease .45s,transform .6s ease .45s;}
+.hero-form.visible{opacity:1;transform:translateY(0);}
+.hero-input{width:100%;padding:15px 20px;border-radius:12px;background:var(--s2);border:1px solid var(--border2);color:white;font-size:15px;font-family:inherit;outline:none;transition:border-color .2s;}
+.hero-input:focus{border-color:rgba(168,85,247,0.5);}
+.hero-input::placeholder{color:var(--muted2);}
+.hero-btn{width:100%;padding:15px;border-radius:12px;background:linear-gradient(135deg,#A855F7,#6366F1);border:none;color:white;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:inherit;box-shadow:0 4px 24px rgba(168,85,247,0.35);transition:opacity .15s,transform .15s;}
+.hero-btn:hover{opacity:.9;transform:translateY(-1px);}
+.hero-hint{font-size:11px;color:var(--muted2);}
+.scroll-cue{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0;transition:opacity .6s ease 1.2s;}
+.scroll-cue.visible{opacity:1;}
+.scroll-cue span{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);}
+.scroll-line{width:1px;height:32px;background:linear-gradient(to bottom,rgba(168,85,247,0.6),transparent);animation:scrollline 2s ease-in-out infinite;}
+@keyframes scrollline{0%{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}51%{transform:scaleY(1);transform-origin:bottom;}100%{transform:scaleY(0);transform-origin:bottom;}}
+
+/* ── SHARED SECTION STYLES ── */
+.section{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:120px 48px;position:relative;overflow:hidden;}
+.section-inner{max-width:900px;width:100%;margin:0 auto;}
+.section-eye{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:14px;opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease;}
+.section-eye.visible{opacity:1;transform:translateY(0);}
+.section-title{font-size:clamp(32px,4.5vw,54px);font-weight:800;color:white;letter-spacing:-1px;line-height:1.1;margin-bottom:20px;opacity:0;transform:translateY(16px);transition:opacity .55s ease .1s,transform .55s ease .1s;}
+.section-title.visible{opacity:1;transform:translateY(0);}
+.section-sub{font-size:18px;color:var(--muted);line-height:1.75;max-width:520px;opacity:0;transform:translateY(12px);transition:opacity .55s ease .2s,transform .55s ease .2s;}
+.section-sub.visible{opacity:1;transform:translateY(0);}
+.div{height:1px;background:var(--border2);}
+
+/* ── SECTION 1: VOICE FIRST — WAVEFORM ── */
+.s1-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+.s1-copy{}
+.s1-visual{display:flex;flex-direction:column;align-items:center;gap:20px;}
+.s1-glow{position:absolute;right:-100px;top:50%;transform:translateY(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(99,102,241,0.08) 0%,transparent 70%);pointer-events:none;}
+.wave-wrap{width:100%;height:100px;position:relative;opacity:0;transform:translateY(20px);transition:opacity .6s ease .3s,transform .6s ease .3s;}
+.wave-wrap.visible{opacity:1;transform:translateY(0);}
+canvas#waveCanvas{width:100%;height:100%;display:block;}
+.wave-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);text-align:center;}
+.steps{display:flex;flex-direction:column;gap:16px;margin-top:36px;}
+.step{display:flex;align-items:flex-start;gap:14px;opacity:0;transform:translateX(-16px);transition:opacity .45s ease,transform .45s ease;}
+.step.visible{opacity:1;transform:translateX(0);}
+.step-num{width:28px;height:28px;border-radius:50%;background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.25);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#A855F7;flex-shrink:0;margin-top:2px;}
+.step-text{font-size:15px;color:var(--muted);line-height:1.6;}
+.step-text strong{color:white;font-weight:600;}
+
+/* ── SECTION 2: AI INSIGHT — CARD FLIP ── */
+.s2{background:linear-gradient(180deg,var(--bg) 0%,rgba(168,85,247,0.03) 50%,var(--bg) 100%);}
+.s2-layout{display:flex;flex-direction:column;align-items:center;gap:60px;}
+.flip-card-wrap{perspective:1000px;width:340px;height:220px;cursor:pointer;}
+.flip-card{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.645,.045,.355,1);}
+.flip-card.flipped{transform:rotateY(180deg);}
+.flip-front,.flip-back{position:absolute;inset:0;backface-visibility:hidden;border-radius:20px;padding:24px;}
+.flip-front{background:var(--surface);border:1px solid var(--border2);display:flex;flex-direction:column;justify-content:space-between;}
+.flip-back{background:#1A0A2E;border:1px solid rgba(168,85,247,0.5);transform:rotateY(180deg);position:relative;overflow:hidden;box-shadow:0 0 40px rgba(168,85,247,0.15);}
+.flip-back::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#A855F7,transparent);}
+.flip-jot-num{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:10px;}
+.flip-jot-title{font-size:16px;font-weight:700;color:white;line-height:1.4;margin-bottom:auto;}
+.flip-jot-footer{display:flex;justify-content:space-between;align-items:center;}
+.flip-jot-time{font-size:10px;color:var(--muted2);}
+.flip-tag{font-size:7px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;padding:3px 9px;border-radius:20px;background:rgba(168,85,247,0.12);color:#A855F7;border:1px solid rgba(168,85,247,0.25);}
+.flip-ai-header{display:flex;align-items:center;gap:7px;margin-bottom:12px;}
+.flip-ai-icon{font-size:14px;font-weight:700;letter-spacing:-1px;color:#A855F7;}
+.flip-ai-label{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#A855F7;}
+.flip-ai-text{font-size:13px;color:#C4B5FD;line-height:1.7;}
+.flip-hint{font-size:11px;color:var(--muted2);opacity:0;transition:opacity .4s ease .8s;}
+.flip-hint.visible{opacity:1;}
+
+/* ── SECTION 3: QUERYABLE — CHAT ── */
+.s3-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+.chat-demo{background:var(--surface);border:1px solid var(--border2);border-radius:24px;padding:28px;opacity:0;transform:translateY(24px);transition:opacity .6s ease .2s,transform .6s ease .2s;}
+.chat-demo.visible{opacity:1;transform:translateY(0);}
+.chat-bar{display:flex;align-items:center;gap:10px;background:var(--s3);border:1px solid var(--border2);border-radius:100px;padding:13px 18px;margin-bottom:16px;transition:border-color .3s,background .3s;}
+.chat-bar.active{border-color:rgba(168,85,247,0.45);background:rgba(168,85,247,0.05);}
+.chat-sparkle{font-size:13px;color:var(--purple);}
+.chat-text-area{flex:1;font-size:13px;}
+.chat-ph{color:var(--muted2);}
+.chat-typed{color:white;}
+.chat-cursor{display:inline-block;width:2px;height:12px;background:#A855F7;margin-left:1px;animation:blink .75s ease-in-out infinite;vertical-align:middle;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+.chat-mic{width:30px;height:30px;border-radius:50%;background:var(--s2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.chat-response{background:rgba(168,85,247,0.04);border:1px solid rgba(168,85,247,0.2);border-radius:14px;padding:16px 18px;position:relative;overflow:hidden;opacity:0;transform:translateY(8px);transition:opacity .5s ease,transform .5s ease;}
+.chat-response.visible{opacity:1;transform:translateY(0);}
+.chat-response::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(168,85,247,0.5),transparent);}
+.chat-res-header{display:flex;align-items:center;gap:6px;margin-bottom:10px;}
+.chat-res-icon{font-size:11px;font-weight:700;letter-spacing:-1px;color:#A855F7;}
+.chat-res-label{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#A855F7;}
+.chat-res-text{font-size:13px;color:#CBD5E1;line-height:1.7;}
+.chat-res-text strong{color:white;font-weight:700;}
+.chat-jots-ref{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.jot-ref{font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(168,85,247,0.1);color:#A855F7;border:1px solid rgba(168,85,247,0.2);}
+
+/* ── SECTION 4: NOTHING FORGOTTEN — STACKING CARDS ── */
+.s4{background:linear-gradient(180deg,var(--bg) 0%,rgba(99,102,241,0.03) 50%,var(--bg) 100%);}
+.s4-layout{display:flex;flex-direction:column;align-items:center;gap:60px;}
+.stack-wrap{position:relative;width:320px;height:280px;}
+.stack-card{position:absolute;width:100%;border-radius:16px;padding:18px;background:var(--surface);border:1px solid var(--border2);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s ease;}
+.stack-card:nth-child(1){transform:translateY(0px) rotate(0deg);z-index:5;background:rgba(168,85,247,0.06);border-color:rgba(168,85,247,0.35);}
+.stack-card:nth-child(2){transform:translateY(8px) rotate(1deg);z-index:4;opacity:.85;}
+.stack-card:nth-child(3){transform:translateY(16px) rotate(-0.8deg);z-index:3;opacity:.65;}
+.stack-card:nth-child(4){transform:translateY(24px) rotate(0.5deg);z-index:2;opacity:.45;}
+.stack-card:nth-child(5){transform:translateY(32px) rotate(-0.3deg);z-index:1;opacity:.25;}
+.stack-jot-num{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:8px;}
+.stack-jot-title{font-size:14px;font-weight:600;color:white;line-height:1.4;margin-bottom:14px;}
+.stack-footer{display:flex;justify-content:space-between;align-items:center;}
+.stack-time{font-size:9px;color:var(--muted2);}
+.counter{font-size:clamp(48px,8vw,88px);font-weight:800;letter-spacing:-2px;line-height:1;}
+.counter-label{font-size:12px;font-weight:600;letter-spacing:1px;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;}
+
+/* ── BOTTOM CTA ── */
+.bottom-cta{padding:140px 24px;text-align:center;position:relative;overflow:hidden;}
+.bottom-cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:500px;background:radial-gradient(ellipse,rgba(168,85,247,0.09) 0%,transparent 65%);pointer-events:none;}
+.cta-h2{font-size:clamp(36px,5vw,58px);font-weight:800;color:white;letter-spacing:-1.5px;line-height:1.1;margin-bottom:16px;}
+.cta-sub{font-size:18px;color:var(--muted);line-height:1.7;margin-bottom:48px;max-width:440px;margin-left:auto;margin-right:auto;}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--border);padding:32px 48px;display:flex;align-items:center;justify-content:space-between;}
+.footer-links{display:flex;gap:24px;}
+.footer-link{font-size:12px;color:var(--muted2);cursor:pointer;transition:color .15s;text-decoration:none;}
+.footer-link:hover{color:white;}
+
+@media(max-width:768px){
+  nav{padding:16px 24px;}
+  .section{padding:100px 24px;}
+  .s1-layout,.s3-layout{grid-template-columns:1fr;}
+  .s1-visual{order:-1;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <span class="nav-logo g">JOT</span>
+  <button class="nav-cta" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Get early access</button>
+</nav>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-wordmark g" id="heroWord">JOT</div>
+  <p class="hero-tagline" id="heroTagline">The voice memory app that thinks with you.</p>
+  <form class="hero-form" id="heroForm" onsubmit="handleSubmit(event,'heroBtn')">
+    <input class="hero-input" type="email" placeholder="your@email.com" required />
+    <button class="hero-btn" id="heroBtn" type="submit">Get early access</button>
+    <p class="hero-hint">Android launch coming soon. No spam, ever.</p>
+  </form>
+  <div class="scroll-cue" id="scrollCue">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<div class="div"></div>
+
+<!-- ══════════════════════════════════════
+     SECTION 1 — VOICE FIRST
+══════════════════════════════════════ -->
+<section class="section" id="s1">
+  <div class="s1-glow"></div>
+  <div class="section-inner">
+    <div class="s1-layout">
+      <div class="s1-copy">
+        <p class="section-eye" data-reveal>Voice first</p>
+        <h2 class="section-title" data-reveal>3 taps.<br>A thought,<br>saved forever.</h2>
+        <p class="section-sub" data-reveal style="margin-bottom:36px;">Your brain moves faster than your fingers. Voice is the only input that keeps up. JOT captures the thought the moment it arrives — before it fades.</p>
+        <div class="steps">
+          <div class="step" data-reveal data-delay="100">
+            <div class="step-num">1</div>
+            <p class="step-text"><strong>Open the app.</strong> The mic is the first thing you see.</p>
+          </div>
+          <div class="step" data-reveal data-delay="200">
+            <div class="step-num">2</div>
+            <p class="step-text"><strong>Tap and speak.</strong> No typing. No friction. Just your voice.</p>
+          </div>
+          <div class="step" data-reveal data-delay="300">
+            <div class="step-num">3</div>
+            <p class="step-text"><strong>Done.</strong> Whisper transcribes instantly. Your thought is saved forever.</p>
+          </div>
+        </div>
+      </div>
+      <div class="s1-visual">
+        <p class="wave-label" style="opacity:0.5;">Scroll to drive the waveform</p>
+        <div class="wave-wrap" data-reveal>
+          <canvas id="waveCanvas"></canvas>
+        </div>
+        <!-- Mic visual -->
+        <div style="position:relative;display:flex;align-items:center;justify-content:center;margin-top:8px;">
+          <div id="micRing" style="position:absolute;width:110px;height:110px;border-radius:50%;border:1px solid rgba(168,85,247,0.2);animation:breathe 3s ease-in-out infinite;"></div>
+          <div id="micRing2" style="position:absolute;width:128px;height:128px;border-radius:50%;border:1px solid rgba(168,85,247,0.08);animation:breathe 3s ease-in-out infinite .6s;"></div>
+          <div style="width:92px;height:92px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#2e2e34,#1c1c20);border:2.5px solid #A855F7;display:flex;align-items:center;justify-content:center;">
+            <svg width="34" height="40" viewBox="0 0 48 58" fill="none">
+              <rect x="14" y="2" width="20" height="30" rx="10" fill="#7C3AED"/>
+              <path d="M6 28 Q6 44 24 44 Q42 44 42 28" stroke="#7C3AED" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+              <line x1="24" y1="44" x2="24" y2="54" stroke="#7C3AED" stroke-width="3.5" stroke-linecap="round"/>
+              <line x1="15" y1="54" x2="33" y2="54" stroke="#7C3AED" stroke-width="3.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="div"></div>
+
+<!-- ══════════════════════════════════════
+     SECTION 2 — AI INSIGHT (CARD FLIP)
+══════════════════════════════════════ -->
+<section class="section s2" id="s2">
+  <div class="section-inner">
+    <div class="s2-layout">
+      <div style="text-align:center;">
+        <p class="section-eye" data-reveal>AI Insight</p>
+        <h2 class="section-title" data-reveal style="max-width:600px;margin:0 auto 16px;">Your AI noticed something<br>you might have missed.</h2>
+        <p class="section-sub" data-reveal style="margin:0 auto 48px;">After every JOT, Gemini looks at your last 10 recordings and surfaces a pattern, a contradiction, or an observation you wouldn't have seen yourself.</p>
+
+        <!-- FLIP CARD -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:16px;">
+          <div class="flip-card-wrap" id="flipWrap">
+            <div class="flip-card" id="flipCard">
+              <!-- FRONT -->
+              <div class="flip-front">
+                <div>
+                  <div class="flip-jot-num">JOT #47</div>
+                  <div class="flip-jot-title">Positioning idea — lead with the data moat angle, not the voice capture angle</div>
+                </div>
+                <div class="flip-jot-footer">
+                  <span class="flip-jot-time">Today · 15:30</span>
+                  <span class="flip-tag">Thought</span>
+                </div>
+              </div>
+              <!-- BACK -->
+              <div class="flip-back">
+                <div class="flip-ai-header">
+                  <span class="flip-ai-icon">+|+</span>
+                  <span class="flip-ai-label">AI Insight</span>
+                </div>
+                <p class="flip-ai-text" id="flipText"></p>
+              </div>
+            </div>
+          </div>
+          <p class="flip-hint" id="flipHint">Scroll to flip the card</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="div"></div>
+
+<!-- ══════════════════════════════════════
+     SECTION 3 — QUERYABLE MEMORY
+══════════════════════════════════════ -->
+<section class="section" id="s3">
+  <div class="section-inner">
+    <div class="s3-layout">
+      <div>
+        <p class="section-eye" data-reveal>Your memory, on demand</p>
+        <h2 class="section-title" data-reveal>Ask your JOTs<br>anything.</h2>
+        <p class="section-sub" data-reveal style="margin-bottom:32px;">Every JOT you've ever recorded is queryable. Ask questions in plain English. Get answers drawn from your own thoughts, your own words, your own memory.</p>
+        <div class="steps">
+          <div class="step" data-reveal data-delay="100">
+            <div class="step-num" style="background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.25);color:#818CF8;">✦</div>
+            <p class="step-text"><strong>Find patterns</strong> across months of thinking.</p>
+          </div>
+          <div class="step" data-reveal data-delay="200">
+            <div class="step-num" style="background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.25);color:#818CF8;">✦</div>
+            <p class="step-text"><strong>Surface ideas</strong> you forgot you had.</p>
+          </div>
+          <div class="step" data-reveal data-delay="300">
+            <div class="step-num" style="background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.25);color:#818CF8;">✦</div>
+            <p class="step-text"><strong>Connect dots</strong> across time automatically.</p>
+          </div>
+        </div>
+      </div>
+      <!-- CHAT DEMO -->
+      <div class="chat-demo" id="chatDemo">
+        <div class="chat-bar" id="chatBar">
+          <span class="chat-sparkle">✦</span>
+          <div class="chat-text-area">
+            <span class="chat-ph" id="chatPh">Ask your JOTs anything...</span>
+            <span class="chat-typed" id="chatTyped" style="display:none;"></span>
+          </div>
+          <div class="chat-mic">
+            <svg width="10" height="13" viewBox="0 0 48 58" fill="none">
+              <rect x="14" y="2" width="20" height="30" rx="10" fill="#7C3AED"/>
+              <path d="M6 28 Q6 44 24 44 Q42 44 42 28" stroke="#7C3AED" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <line x1="24" y1="44" x2="24" y2="54" stroke="#7C3AED" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="chat-response" id="chatResponse">
+          <div class="chat-res-header">
+            <span class="chat-res-icon">+|+</span>
+            <span class="chat-res-label">AI Insight</span>
+          </div>
+          <p class="chat-res-text">You've dropped <strong>14 JOTs</strong> about distribution in the past 3 weeks. The strongest thread: organic reach through authenticity. You keep returning to one channel as the anchor — and questioning it every time.</p>
+          <div class="chat-jots-ref">
+            <span class="jot-ref">JOT #38</span>
+            <span class="jot-ref">JOT #29</span>
+            <span class="jot-ref">JOT #11</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="div"></div>
+
+<!-- ══════════════════════════════════════
+     SECTION 4 — NOTHING FORGOTTEN
+     Sticky scroll-driven stack
+══════════════════════════════════════ -->
+<div id="s4-outer" style="position:relative;">
+
+  <!-- Sticky panel — sticks while user scrolls through spacer -->
+  <div id="s4-sticky" style="position:sticky;top:0;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;background:var(--bg);overflow:hidden;">
+
+    <!-- background glow -->
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:500px;background:radial-gradient(ellipse,rgba(99,102,241,0.06) 0%,transparent 70%);pointer-events:none;"></div>
+
+    <!-- Copy -->
+    <div style="text-align:center;margin-bottom:24px;z-index:2;position:relative;">
+      <p style="font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:12px;">Nothing forgotten</p>
+      <h2 style="font-size:clamp(30px,4vw,50px);font-weight:800;color:white;letter-spacing:-1px;line-height:1.1;margin-bottom:12px;">Every thought.<br>Remembered forever.</h2>
+      <p style="font-size:16px;color:var(--muted);line-height:1.7;max-width:420px;margin:0 auto;">Your memory compounds with every recording. JOT #1 is as queryable as JOT #500.</p>
+    </div>
+
+    <!-- Counter — updates as cards arrive -->
+    <div style="text-align:center;margin-bottom:28px;z-index:2;position:relative;">
+      <div class="counter g" id="s4counter">0</div>
+      <div class="counter-label" style="margin-top:6px;">JOTs in your memory</div>
+    </div>
+
+    <!-- Stack box — tall enough for cards + offset, clips overflow -->
+    <div style="position:relative;width:320px;height:200px;z-index:2;" id="s4stack"></div>
+
+    <!-- scroll hint -->
+    <p style="position:absolute;bottom:36px;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);opacity:0.5;">Scroll to build your memory</p>
+  </div>
+
+  <!-- Scroll spacer — 300vh gives smooth scroll-driven feel -->
+  <div style="height:300vh;"></div>
+
+</div>
+
+<div class="div"></div>
+
+<!-- ══════════════════════════════════════
+     SECTION 5 — MULTILINGUAL
+     Floating words in many languages dissolve into English
+══════════════════════════════════════ -->
+<section class="section" id="s5" style="min-height:100vh;overflow:hidden;">
+  <div class="section-inner" style="width:100%;max-width:900px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;">
+
+      <!-- Copy -->
+      <div>
+        <p class="section-eye" data-reveal>99+ languages</p>
+        <h2 class="section-title" data-reveal>Think in any language.<br>JOT understands<br>all of them.</h2>
+        <p class="section-sub" data-reveal>If your best ideas arrive in Arabic, your sharpest observations in French, and your daily notes in English — JOT captures all of it exactly as it happened in your brain. No translation. No loss. Your thoughts, in your language.</p>
+      </div>
+
+      <!-- Animation canvas -->
+      <div id="langVisual" style="position:relative;height:340px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .6s ease .3s;">
+        <!-- Words injected by JS -->
+        <div id="langWords" style="position:relative;width:100%;height:100%;"></div>
+        <!-- Final English result -->
+        <div id="langResult" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .8s ease;text-align:center;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);margin-bottom:12px;">Whisper heard</div>
+          <div style="background:var(--surface);border:1px solid rgba(168,85,247,0.3);border-radius:16px;padding:20px 28px;position:relative;overflow:hidden;max-width:260px;">
+            <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(168,85,247,0.5),transparent);"></div>
+            <p style="font-size:15px;font-weight:600;color:white;line-height:1.5;" id="langFinalText"></p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="div"></div>
+
+<!-- ══════════════════════════════════════
+     SECTION 6 — REAL-TIME JOURNALING
+     Two column timeline comparison
+══════════════════════════════════════ -->
+<section class="section" id="s6">
+  <div class="section-inner">
+
+    <div style="text-align:center;margin-bottom:56px;">
+      <p class="section-eye" data-reveal>Capture as it happens</p>
+      <h2 class="section-title" data-reveal style="max-width:600px;margin:0 auto 16px;">"Capture the thought.<br>Not the memory of it."</h2>
+      <p class="section-sub" data-reveal style="max-width:520px;margin:0 auto;">Traditional journaling asks you to reconstruct your day from memory at 10pm. By then, the emotion is gone. The exact words are gone. JOT captures thoughts the moment they arrive.</p>
+    </div>
+
+    <!-- Two column comparison -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:800px;margin:0 auto;">
+
+      <!-- LEFT: Traditional journaling -->
+      <div id="trad-col" style="opacity:0;transform:translateY(24px);transition:opacity .5s ease,transform .5s ease;">
+        <div style="text-align:center;margin-bottom:20px;">
+          <span style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);padding:6px 14px;border-radius:20px;border:1px solid var(--border2);">Traditional journaling</span>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:20px;min-height:320px;display:flex;flex-direction:column;gap:0;">
+          <!-- Single late entry -->
+          <div style="display:flex;gap:12px;align-items:flex-start;margin-top:auto;">
+            <div style="flex-shrink:0;text-align:right;width:48px;">
+              <div style="font-size:9px;font-weight:700;color:var(--muted2);">10:48</div>
+              <div style="font-size:8px;color:var(--muted2);opacity:0.5;">PM</div>
+            </div>
+            <div style="flex:1;border-left:2px solid var(--border2);padding-left:14px;">
+              <div style="background:var(--s2);border-radius:10px;padding:14px;border:1px solid var(--border2);">
+                <p style="font-size:12px;color:var(--muted);line-height:1.6;font-style:italic;">"Today was okay I think. Had some meetings. Came up with an idea at some point but can't really remember the details now. Will try to think about it more tomorrow..."</p>
+              </div>
+              <div style="margin-top:8px;font-size:9px;color:var(--muted2);opacity:0.5;">Reconstructed from memory. Details lost.</div>
+            </div>
+          </div>
+          <div style="margin-top:16px;padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;text-align:center;">
+            <span style="font-size:10px;color:var(--muted2);opacity:0.6;">1 entry · most of the day forgotten</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: JOT -->
+      <div id="jot-col" style="opacity:0;transform:translateY(24px);transition:opacity .5s ease .15s,transform .5s ease .15s;">
+        <div style="text-align:center;margin-bottom:20px;">
+          <span class="g" style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:6px 14px;border-radius:20px;border:1px solid rgba(168,85,247,0.3);background:rgba(168,85,247,0.06);">JOT</span>
+        </div>
+        <div style="background:var(--surface);border:1px solid rgba(168,85,247,0.2);border-radius:16px;padding:20px;min-height:320px;display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(168,85,247,0.4),transparent);"></div>
+          <!-- JOT entries stagger in -->
+          <div class="tl-entry" data-tl-delay="0" style="opacity:0;transform:translateX(12px);transition:opacity .4s ease,transform .4s ease;">
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <div style="flex-shrink:0;width:44px;text-align:right;"><div style="font-size:9px;font-weight:700;color:#A855F7;">7:42</div><div style="font-size:8px;color:var(--muted2);opacity:0.6;">AM</div></div>
+              <div style="flex:1;border-left:2px solid rgba(168,85,247,0.3);padding-left:12px;">
+                <div style="font-size:12px;font-weight:600;color:white;line-height:1.4;">"The positioning angle — data moat, not voice."</div>
+                <div style="font-size:8px;color:#A855F7;margin-top:4px;">JOT #44 · Thought</div>
+              </div>
+            </div>
+          </div>
+          <div class="tl-entry" data-tl-delay="200" style="opacity:0;transform:translateX(12px);transition:opacity .4s ease,transform .4s ease;">
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <div style="flex-shrink:0;width:44px;text-align:right;"><div style="font-size:9px;font-weight:700;color:#818CF8;">11:15</div><div style="font-size:8px;color:var(--muted2);opacity:0.6;">AM</div></div>
+              <div style="flex:1;border-left:2px solid rgba(99,102,241,0.3);padding-left:12px;">
+                <div style="font-size:12px;font-weight:600;color:white;line-height:1.4;">"Why do I keep avoiding the pricing question?"</div>
+                <div style="font-size:8px;color:#818CF8;margin-top:4px;">JOT #45 · Reflection</div>
+              </div>
+            </div>
+          </div>
+          <div class="tl-entry" data-tl-delay="400" style="opacity:0;transform:translateX(12px);transition:opacity .4s ease,transform .4s ease;">
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <div style="flex-shrink:0;width:44px;text-align:right;"><div style="font-size:9px;font-weight:700;color:#A855F7;">2:33</div><div style="font-size:8px;color:var(--muted2);opacity:0.6;">PM</div></div>
+              <div style="flex:1;border-left:2px solid rgba(168,85,247,0.3);padding-left:12px;">
+                <div style="font-size:12px;font-weight:600;color:white;line-height:1.4;">"Ship the simplest version first. Nothing else."</div>
+                <div style="font-size:8px;color:#A855F7;margin-top:4px;">JOT #46 · Thought</div>
+              </div>
+            </div>
+          </div>
+          <div class="tl-entry" data-tl-delay="600" style="opacity:0;transform:translateX(12px);transition:opacity .4s ease,transform .4s ease;">
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <div style="flex-shrink:0;width:44px;text-align:right;"><div style="font-size:9px;font-weight:700;color:#818CF8;">6:08</div><div style="font-size:8px;color:var(--muted2);opacity:0.6;">PM</div></div>
+              <div style="flex:1;border-left:2px solid rgba(99,102,241,0.3);padding-left:12px;">
+                <div style="font-size:12px;font-weight:600;color:white;line-height:1.4;">"Felt genuinely excited about this today. Write that down."</div>
+                <div style="font-size:8px;color:#818CF8;margin-top:4px;">JOT #47 · Reflection</div>
+              </div>
+            </div>
+          </div>
+          <div style="padding:8px;background:rgba(168,85,247,0.04);border-radius:8px;text-align:center;border:1px solid rgba(168,85,247,0.1);margin-top:auto;">
+            <span style="font-size:10px;color:#A855F7;font-weight:600;">4 JOTs · captured in the moment</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="div"></div>
+
+<!-- ══════════════════════════════════════
+     FEATURES GRID
+══════════════════════════════════════ -->
+<section style="padding:100px 48px;max-width:900px;margin:0 auto;">
+  <div style="text-align:center;margin-bottom:48px;">
+    <p class="section-eye" data-reveal>Everything else</p>
+    <h2 class="section-title" data-reveal style="max-width:500px;margin:0 auto;">Built right,<br>from day one.</h2>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
+    <div class="feat-card" data-reveal style="border-color:rgba(168,85,247,0.15);">
+      <div class="feat-dot" style="background:#A855F7;box-shadow:0 0 12px #A855F7;"></div>
+      <h3>Powered by Whisper</h3>
+      <p>OpenAI's Whisper is the world's most accurate transcription model. Every user gets it. Always.</p>
+    </div>
+    <div class="feat-card" data-reveal data-delay="60" style="border-color:rgba(99,102,241,0.15);">
+      <div class="feat-dot" style="background:#6366F1;box-shadow:0 0 12px #6366F1;"></div>
+      <h3>Gemini 2.5 Flash insights</h3>
+      <p>Fast, efficient, genuinely intelligent. The AI layer adds value without adding friction or cost.</p>
+    </div>
+    <div class="feat-card" data-reveal data-delay="120" style="border-color:rgba(168,85,247,0.15);">
+      <div class="feat-dot" style="background:#A855F7;box-shadow:0 0 12px #A855F7;"></div>
+      <h3>Eyes-free, hands-free</h3>
+      <p>Capture thoughts while walking, driving, or cooking. Works when your phone is in your pocket.</p>
+    </div>
+    <div class="feat-card" data-reveal data-delay="180" style="border-color:rgba(99,102,241,0.15);">
+      <div class="feat-dot" style="background:#6366F1;box-shadow:0 0 12px #6366F1;"></div>
+      <h3>Private by design</h3>
+      <p>No social feed. No sharing. No audience. JOT is a private conversation with yourself.</p>
+    </div>
+    <div class="feat-card" data-reveal data-delay="240" style="border-color:rgba(168,85,247,0.15);">
+      <div class="feat-dot" style="background:#A855F7;box-shadow:0 0 12px #A855F7;"></div>
+      <h3>Zero friction</h3>
+      <p>Every extra tap is a problem. The app opens to the mic. Three taps to a saved thought.</p>
+    </div>
+    <div class="feat-card" data-reveal data-delay="300" style="border-color:rgba(99,102,241,0.15);">
+      <div class="feat-dot" style="background:#6366F1;box-shadow:0 0 12px #6366F1;"></div>
+      <h3>Memory that compounds</h3>
+      <p>The longer you use JOT, the more valuable your history becomes. Your thinking, over time.</p>
+    </div>
+  </div>
+</section>
+
+<div class="div"></div>
+
+<!-- ══════════════════════════════════════
+     BOTTOM CTA
+══════════════════════════════════════ -->
+<div class="bottom-cta" id="cta">
+  <div class="bottom-cta-glow"></div>
+  <h2 class="cta-h2">Stop losing your<br>best thoughts.</h2>
+  <p class="cta-sub">JOT is coming to Android. Join the waitlist and be first to drop a JOT.</p>
+  <form style="display:flex;flex-direction:column;gap:10px;max-width:380px;margin:0 auto;" onsubmit="handleSubmit(event,'ctaBtn')">
+    <input class="hero-input" type="email" placeholder="your@email.com" required />
+    <button class="hero-btn" id="ctaBtn" type="submit">Get early access</button>
+  </form>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span class="nav-logo g">JOT</span>
+  <div class="footer-links">
+    <a class="footer-link">Privacy</a>
+    <a class="footer-link">Terms</a>
+    <a class="footer-link">@tryjot</a>
+  </div>
+  <span style="font-size:11px;color:var(--muted2);">© 2026 JOT. Built by Yussuf.</span>
+</footer>
+
+<style>
+@keyframes breathe{0%,100%{opacity:0.35;transform:scale(1);}50%{opacity:0.8;transform:scale(1.04);}}
+</style>
+
+<script>
+// ── NAV
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>40));
+
+// ── HERO ENTRANCE
+(function(){
+  setTimeout(()=>document.getElementById('heroWord').classList.add('visible'),100);
+  setTimeout(()=>document.getElementById('heroTagline').classList.add('visible'),300);
+  setTimeout(()=>document.getElementById('heroForm').classList.add('visible'),500);
+  setTimeout(()=>document.getElementById('scrollCue').classList.add('visible'),1200);
+})();
+
+// ── INTERSECTION OBSERVER — generic reveals
+const revealObs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const delay = parseInt(e.target.dataset.delay||0);
+      setTimeout(()=>e.target.classList.add('visible'),delay);
+      revealObs.unobserve(e.target);
+    }
+  });
+},{threshold:0.15});
+document.querySelectorAll('[data-reveal]').forEach(el=>revealObs.observe(el));
+
+// ── WAVEFORM
+const canvas=document.getElementById('waveCanvas');
+const ctx=canvas.getContext('2d');
+let lastSY=0,scrollSpd=0;
+const amps=new Array(60).fill(0.05);
+
+function resizeWave(){
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=canvas.offsetWidth*dpr;
+  canvas.height=canvas.offsetHeight*dpr;
+  ctx.scale(dpr,dpr);
+}
+resizeWave();
+window.addEventListener('resize',resizeWave);
+window.addEventListener('scroll',()=>{
+  scrollSpd=Math.min(1,Math.abs(scrollY-lastSY)/40);
+  lastSY=scrollY;
+});
+
+function drawWave(){
+  const W=canvas.offsetWidth,H=canvas.offsetHeight;
+  ctx.clearRect(0,0,W,H);
+  const newAmp=Math.max(0.04,scrollSpd+Math.random()*0.04);
+  amps.push(newAmp);
+  if(amps.length>60)amps.shift();
+  scrollSpd*=0.82;
+  const bw=4,gap=5;
+  const total=Math.floor(W/(bw+gap));
+  for(let i=0;i<total;i++){
+    const ai=amps.length-total+i;
+    const amp=ai>=0?amps[ai]:0.04;
+    const bh=Math.max(5,amp*H*0.88);
+    const x=i*(bw+gap);
+    const top=(H-bh)/2;
+    const gr=ctx.createLinearGradient(0,top+bh,0,top);
+    gr.addColorStop(0,'#6366F1');
+    gr.addColorStop(1,'#A855F7');
+    ctx.beginPath();
+    if(ctx.roundRect)ctx.roundRect(x,top,bw,bh,2);
+    else ctx.rect(x,top,bw,bh);
+    ctx.fillStyle=gr;
+    ctx.fill();
+  }
+  requestAnimationFrame(drawWave);
+}
+drawWave();
+
+// ── CARD FLIP on scroll into S2
+const flipText="You've been circling the same positioning question for 12 days. The voice capture angle keeps getting deprioritised in your own thinking — which might be the signal itself.";
+let flipDone=false;
+const flipObs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting&&!flipDone){
+      flipDone=true;
+      document.getElementById('flipHint').classList.add('visible');
+      setTimeout(()=>{
+        document.getElementById('flipCard').classList.add('flipped');
+        // Type text on back
+        setTimeout(()=>{
+          const el=document.getElementById('flipText');
+          let i=0;
+          const t=setInterval(()=>{
+            if(i<flipText.length){el.textContent+=flipText[i];i++;}
+            else clearInterval(t);
+          },18);
+        },500);
+      },800);
+      flipObs.disconnect();
+    }
+  });
+},{threshold:0.5});
+flipObs.observe(document.getElementById('flipWrap'));
+
+// ── CHAT DEMO auto-type
+const q="What have I been thinking about most this week?";
+let chatDone=false;
+const chatObs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting&&!chatDone){
+      chatDone=true;
+      document.getElementById('chatDemo').classList.add('visible');
+      setTimeout(runChat,600);
+      chatObs.disconnect();
+    }
+  });
+},{threshold:0.4});
+chatObs.observe(document.getElementById('chatDemo'));
+
+function runChat(){
+  const bar=document.getElementById('chatBar');
+  const ph=document.getElementById('chatPh');
+  const typed=document.getElementById('chatTyped');
+  const resp=document.getElementById('chatResponse');
+  bar.classList.add('active');
+  ph.style.display='none';
+  typed.style.display='block';
+  const cursor=document.createElement('span');
+  cursor.className='chat-cursor';
+  typed.appendChild(cursor);
+  let i=0;
+  const t=setInterval(()=>{
+    if(i<q.length){typed.insertBefore(document.createTextNode(q[i]),cursor);i++;}
+    else{clearInterval(t);setTimeout(()=>resp.classList.add('visible'),700);}
+  },42);
+}
+
+// ── STACKING CARDS + COUNTER on scroll
+// ── SECTION 4: SCROLL-DRIVEN STACK
+const s4jots=[
+  {num:1,title:"My first thought. The idea that started everything.",time:"6 months ago",mode:"thought"},
+  {num:5,title:"Why does no app capture thoughts the way I actually think?",time:"5 months ago",mode:"reflection"},
+  {num:12,title:"Voice is the only input that keeps up with the brain.",time:"4 months ago",mode:"thought"},
+  {num:18,title:"The data moat is the real long-term differentiator.",time:"3 months ago",mode:"thought"},
+  {num:24,title:"Friction is the enemy. Every extra tap is a problem.",time:"2 months ago",mode:"reflection"},
+  {num:31,title:"Free tier should feel genuinely useful, not crippled.",time:"6 weeks ago",mode:"thought"},
+  {num:38,title:"Distribution through authenticity — share the real journey.",time:"3 weeks ago",mode:"reflection"},
+  {num:44,title:"Three things that need to happen before Android launch.",time:"Yesterday",mode:"thought"},
+  {num:46,title:"The simplest version of this product needs to ship first.",time:"Today · 09:14",mode:"reflection"},
+  {num:47,title:"Positioning — lead with the data moat, not voice capture.",time:"Today · 15:30",mode:"thought"},
+];
+
+const tagStyles={
+  thought:"background:rgba(168,85,247,0.12);color:#A855F7;border:1px solid rgba(168,85,247,0.25);",
+  reflection:"background:rgba(99,102,241,0.12);color:#818CF8;border:1px solid rgba(99,102,241,0.25);"
+};
+
+// Track which cards are visible — none at start
+let revealedCards=[];
+let lastRevealIdx=-1;
+
+function buildCard(jot){
+  const card=document.createElement('div');
+  // Start invisible, below the stack — no transition yet
+  card.style.cssText=[
+    'position:absolute',
+    'bottom:0',
+    'left:0',
+    'right:0',
+    'border-radius:16px',
+    'padding:16px 18px',
+    'background:#1B1B1D',
+    'border:1px solid #3A3A3C',
+    'opacity:0',
+    'transform:translateY(80px)',
+    'will-change:transform,opacity',
+    'box-shadow:none',
+  ].join(';');
+  card.innerHTML=
+    '<div style="font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:8px;">JOT #'+jot.num+'</div>'+
+    '<div style="font-size:14px;font-weight:600;color:white;line-height:1.4;margin-bottom:12px;">'+jot.title+'</div>'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;">'+
+      '<span style="font-size:9px;color:var(--muted2);">'+jot.time+'</span>'+
+      '<span style="font-size:7px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;padding:3px 9px;border-radius:20px;'+tagStyles[jot.mode]+'">'+jot.mode+'</span>'+
+    '</div>';
+  return card;
+}
+
+function repositionVisible(){
+  const yOff=[0,10,20,30];
+  const rot=[0,1.2,-0.8,0.5];
+  const sc=[1,0.96,0.92,0.88];
+  const len=revealedCards.length;
+  revealedCards.forEach((card,i)=>{
+    const pos=len-1-i; // 0=top of stack, higher=further back
+    if(pos===0){
+      // Top card — fully visible, solid purple-tinted bg
+      card.style.transition='transform .5s cubic-bezier(.34,1.56,.64,1),opacity .4s ease';
+      card.style.transform='translateY(0px) rotate(0deg) scale(1)';
+      card.style.opacity='1';
+      card.style.zIndex='20';
+      card.style.background='#1e1a2e';
+      card.style.borderColor='rgba(168,85,247,0.45)';
+      card.style.boxShadow='0 8px 32px rgba(168,85,247,0.15)';
+    } else if(pos===1){
+      card.style.transition='transform .5s cubic-bezier(.34,1.56,.64,1),opacity .4s ease';
+      card.style.transform='translateY(12px) rotate(1deg) scale(0.96)';
+      card.style.opacity='1';
+      card.style.zIndex='19';
+      card.style.background='#1B1B1D';
+      card.style.borderColor='#3A3A3C';
+      card.style.boxShadow='none';
+    } else if(pos===2){
+      card.style.transition='transform .5s cubic-bezier(.34,1.56,.64,1),opacity .4s ease';
+      card.style.transform='translateY(22px) rotate(-0.6deg) scale(0.92)';
+      card.style.opacity='0.7';
+      card.style.zIndex='18';
+      card.style.background='#1B1B1D';
+      card.style.borderColor='#2A2A2E';
+      card.style.boxShadow='none';
+    } else if(pos===3){
+      card.style.transition='transform .5s cubic-bezier(.34,1.56,.64,1),opacity .4s ease';
+      card.style.transform='translateY(30px) rotate(0.4deg) scale(0.88)';
+      card.style.opacity='0.4';
+      card.style.zIndex='17';
+      card.style.background='#1B1B1D';
+      card.style.borderColor='#2A2A2E';
+      card.style.boxShadow='none';
+    } else {
+      // Anything deeper — completely hidden, no peekthrough
+      card.style.transition='opacity .2s ease';
+      card.style.opacity='0';
+      card.style.zIndex='1';
+      card.style.pointerEvents='none';
+    }
+  });
+}
+
+function revealNext(idx){
+  if(idx>=s4jots.length)return;
+  const stack=document.getElementById('s4stack');
+  const card=buildCard(s4jots[idx]);
+  stack.appendChild(card);
+  revealedCards.push(card);
+  // Force layout, then add transition and animate in
+  card.getBoundingClientRect();
+  requestAnimationFrame(()=>{
+    card.style.transition='transform .55s cubic-bezier(.34,1.56,.64,1),opacity .45s ease';
+    card.style.opacity='1';
+    card.style.transform='translateY(0)';
+    // After card arrives, reposition whole stack
+    setTimeout(repositionVisible,50);
+  });
+  // Update counter
+  document.getElementById('s4counter').textContent=s4jots[idx].num;
+}
+
+// Scroll handler — maps scroll progress to card reveals
+const s4outer=document.getElementById('s4-outer');
+function onScrollS4(){
+  if(!s4outer)return;
+  const rect=s4outer.getBoundingClientRect();
+  const totalScroll=s4outer.offsetHeight-window.innerHeight;
+  if(totalScroll<=0)return;
+  const scrolled=Math.max(0,-rect.top);
+  const progress=Math.min(1,scrolled/totalScroll);
+  // Map 0..1 progress to 0..9 card index
+  const targetIdx=Math.min(s4jots.length-1,Math.floor(progress*s4jots.length));
+  if(targetIdx>lastRevealIdx){
+    for(let i=lastRevealIdx+1;i<=targetIdx;i++){
+      revealNext(i);
+    }
+    lastRevealIdx=targetIdx;
+  }
+}
+
+window.addEventListener('scroll',onScrollS4,{passive:true});
+
+// ── SECTION 5: MULTILINGUAL FLOATING WORDS
+const langPhrases=[
+  {text:"لدي فكرة رائعة",lang:"Arabic",dir:"rtl"},
+  {text:"J'ai une idée",lang:"French",dir:"ltr"},
+  {text:"Tengo una idea",lang:"Spanish",dir:"ltr"},
+  {text:"アイデアがある",lang:"Japanese",dir:"ltr"},
+  {text:"Мне пришла идея",lang:"Russian",dir:"ltr"},
+  {text:"मेरे पास एक विचार है",lang:"Hindi",dir:"ltr"},
+  {text:"Tôi có một ý tưởng",lang:"Vietnamese",dir:"ltr"},
+  {text:"Ich habe eine Idee",lang:"German",dir:"ltr"},
+];
+const langResult="I just had an idea I need to capture.";
+let langDone=false;
+
+const langObs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting&&!langDone){
+      langDone=true;
+      runLangAnimation();
+      langObs.disconnect();
+    }
+  });
+},{threshold:0.4});
+const langEl=document.getElementById('langVisual');
+if(langEl)langObs.observe(langEl);
+
+function runLangAnimation(){
+  const visual=document.getElementById('langVisual');
+  const wordsContainer=document.getElementById('langWords');
+  const resultEl=document.getElementById('langResult');
+  const finalText=document.getElementById('langFinalText');
+  if(!visual)return;
+  visual.style.opacity='1';
+
+  // Positions for floating words
+  const positions=[
+    {top:'8%',left:'5%'},{top:'15%',left:'55%'},
+    {top:'30%',left:'2%'},{top:'28%',left:'60%'},
+    {top:'50%',left:'10%'},{top:'52%',left:'52%'},
+    {top:'70%',left:'8%'},{top:'72%',left:'55%'},
+  ];
+
+  // Show words one by one
+  langPhrases.forEach((phrase,i)=>{
+    setTimeout(()=>{
+      const word=document.createElement('div');
+      const pos=positions[i]||{top:(10+i*11)+'%',left:'10%'};
+      word.style.cssText=
+        'position:absolute;'+
+        'top:'+pos.top+';'+
+        'left:'+pos.left+';'+
+        'font-size:13px;font-weight:600;'+
+        'color:rgba(148,163,184,0.9);'+
+        'opacity:0;transition:opacity .5s ease;'+
+        'white-space:nowrap;'+
+        'direction:'+phrase.dir+';';
+      word.innerHTML=
+        phrase.text+
+        '<span style="display:block;font-size:8px;font-weight:400;color:var(--muted2);letter-spacing:1px;margin-top:2px;">'+phrase.lang+'</span>';
+      wordsContainer.appendChild(word);
+      requestAnimationFrame(()=>requestAnimationFrame(()=>word.style.opacity='1'));
+
+      // Fade out after all words shown
+      setTimeout(()=>{word.style.opacity='0';},2400);
+    },i*300);
+  });
+
+  // After all words fade — show result
+  setTimeout(()=>{
+    resultEl.style.opacity='1';
+    let i=0;
+    const t=setInterval(()=>{
+      if(i<langResult.length){finalText.textContent+=langResult[i];i++;}
+      else clearInterval(t);
+    },35);
+  },langPhrases.length*300+1000);
+}
+
+// ── SECTION 6: TIMELINE COMPARISON
+const s6obs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      document.getElementById('trad-col').style.opacity='1';
+      document.getElementById('trad-col').style.transform='translateY(0)';
+      document.getElementById('jot-col').style.opacity='1';
+      document.getElementById('jot-col').style.transform='translateY(0)';
+      // Stagger timeline entries
+      document.querySelectorAll('.tl-entry').forEach(entry=>{
+        const delay=parseInt(entry.dataset.tlDelay||0);
+        setTimeout(()=>{
+          entry.style.opacity='1';
+          entry.style.transform='translateX(0)';
+        },delay+400);
+      });
+      s6obs.disconnect();
+    }
+  });
+},{threshold:0.3});
+const s6el=document.getElementById('s6');
+if(s6el)s6obs.observe(s6el);
+
+// ── FORM SUBMIT
+function handleSubmit(e,btnId){
+  e.preventDefault();
+  const btn=document.getElementById(btnId);
+  btn.textContent="You're on the list ✓";
+  btn.style.background='rgba(168,85,247,0.15)';
+  btn.style.boxShadow='none';
+  btn.disabled=true;
+  e.target.querySelector('input').disabled=true;
+}
+</script>
+</body>
+</html>
