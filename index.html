@@ -202,6 +202,7 @@ footer span:last-child{justify-self:end;}
 </style>
 </head>
 <body>
+<canvas id="ambientWave" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.55;"></canvas>
 
 <!-- NAV -->
 <nav id="nav">
@@ -214,14 +215,15 @@ footer span:last-child{justify-self:end;}
 ══════════════════════════════════════ -->
 <section class="hero">
   <div class="hero-glow"></div>
+  <canvas id="heroParticles" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>
   <div class="hero-wordmark g" id="heroWord">JOT</div>
-  <p class="hero-tagline" id="heroTagline">The voice memory app<br>that thinks with you.</p>
-  <p class="hero-sub" id="heroSub" style="text-wrap:balance;">JOT captures ideas by voice the moment they arrive — then AI structures, stores, and remembers them forever. No typing. No friction. No buried notes.</p>
-  <div class="hero-form" id="heroForm">
+  <p class="hero-tagline" id="heroTagline" style="position:relative;z-index:1;">The voice memory app<br>that thinks with you.</p>
+  <p class="hero-sub" id="heroSub" style="position:relative;z-index:1;text-wrap:balance;">JOT captures ideas by voice the moment they arrive — then AI structures, stores, and remembers them forever. No typing. No friction. No buried notes.</p>
+  <div class="hero-form" id="heroForm" style="position:relative;z-index:1;">
     <a class="hero-btn" href="https://tally.so/r/Gx01QL" target="_blank" rel="noopener noreferrer">Get early access</a>
     <p class="hero-hint">Android launch coming soon. No spam, ever.</p>
   </div>
-  <div class="scroll-cue" id="scrollCue">
+  <div class="scroll-cue" id="scrollCue" style="z-index:1;">
     <span>Scroll</span>
     <div class="scroll-line"></div>
   </div>
@@ -1000,6 +1002,137 @@ function handleSubmit(e,btnId){
   btn.disabled=true;
   e.target.querySelector('input').disabled=true;
 }
+</script>
+<script>
+// ── HERO PARTICLES
+(function(){
+  const canvas = document.getElementById('heroParticles');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+
+  function resize() {
+    canvas.width = canvas.offsetWidth * (window.devicePixelRatio || 1);
+    canvas.height = canvas.offsetHeight * (window.devicePixelRatio || 1);
+    ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function spawn() {
+    return {
+      x: Math.random() * canvas.offsetWidth,
+      y: canvas.offsetHeight * (0.3 + Math.random() * 0.7),
+      r: 0.8 + Math.random() * 2.2,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: -(0.25 + Math.random() * 0.55),
+      alpha: 0,
+      maxAlpha: 0.15 + Math.random() * 0.45,
+      hue: Math.random() > 0.5 ? '#A855F7' : '#6366F1',
+      life: 0,
+      maxLife: 180 + Math.random() * 120,
+    };
+  }
+
+  for (let i = 0; i < 55; i++) {
+    const p = spawn();
+    p.life = Math.random() * p.maxLife;
+    p.y = Math.random() * canvas.offsetHeight;
+    p.alpha = p.maxAlpha * Math.random();
+    particles.push(p);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+    if (particles.length < 55) particles.push(spawn());
+
+    particles.forEach((p, i) => {
+      p.life++;
+      p.x += p.vx;
+      p.y += p.vy;
+
+      const half = p.maxLife / 2;
+      if (p.life < half) {
+        p.alpha = (p.life / half) * p.maxAlpha;
+      } else {
+        p.alpha = ((p.maxLife - p.life) / half) * p.maxAlpha;
+      }
+
+      if (p.life >= p.maxLife) {
+        particles[i] = spawn();
+        return;
+      }
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.hue;
+      ctx.globalAlpha = p.alpha;
+      ctx.fill();
+    });
+
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+<script>
+// ── AMBIENT SCROLL WAVEFORM
+(function(){
+  const canvas = document.getElementById('ambientWave');
+  const ctx = canvas.getContext('2d');
+  let scrollProgress = 0;
+  let targetProgress = 0;
+
+  function resize() {
+    canvas.width = window.innerWidth * (window.devicePixelRatio || 1);
+    canvas.height = window.innerHeight * (window.devicePixelRatio || 1);
+    ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  window.addEventListener('scroll', () => {
+    const maxScroll = document.body.scrollHeight - window.innerHeight;
+    targetProgress = maxScroll > 0 ? window.scrollY / maxScroll : 0;
+  }, { passive: true });
+
+  let t = 0;
+  function draw() {
+    scrollProgress += (targetProgress - scrollProgress) * 0.04;
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+    const amp = scrollProgress * 22;
+    const freq = 0.008;
+    t += 0.008;
+
+    // Wave 1
+    ctx.beginPath();
+    for (let x = 0; x <= window.innerWidth; x += 3) {
+      const y = window.innerHeight / 2
+        + Math.sin(x * freq + t) * amp
+        + Math.sin(x * freq * 2.1 + t * 1.3) * amp * 0.35;
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = `rgba(168,85,247,${0.03 + scrollProgress * 0.09})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Wave 2
+    ctx.beginPath();
+    for (let x = 0; x <= window.innerWidth; x += 3) {
+      const y = window.innerHeight / 2
+        + Math.sin(x * freq * 0.75 + t * 0.85 + 1.2) * amp * 0.7
+        + Math.sin(x * freq * 1.6 + t * 1.1) * amp * 0.25;
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = `rgba(99,102,241,${0.02 + scrollProgress * 0.06})`;
+    ctx.lineWidth = 0.75;
+    ctx.stroke();
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
 </script>
 </body>
 </html>
