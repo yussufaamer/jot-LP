@@ -754,14 +754,7 @@ function runChat(){
 // ── SECTION 4: SCROLL-DRIVEN STACK
 const s4jots=[
   {num:1,title:"My first thought. The idea that started everything.",time:"6 months ago",mode:"thought"},
-  {num:5,title:"Why does no app capture thoughts the way I actually think?",time:"5 months ago",mode:"reflection"},
-  {num:12,title:"Voice is the only input that keeps up with the brain.",time:"4 months ago",mode:"thought"},
-  {num:18,title:"The data moat is the real long-term differentiator.",time:"3 months ago",mode:"thought"},
   {num:24,title:"Friction is the enemy. Every extra tap is a problem.",time:"2 months ago",mode:"reflection"},
-  {num:31,title:"Free tier should feel genuinely useful, not crippled.",time:"6 weeks ago",mode:"thought"},
-  {num:38,title:"Distribution through authenticity — share the real journey.",time:"3 weeks ago",mode:"reflection"},
-  {num:44,title:"Three things that need to happen before Android launch.",time:"Yesterday",mode:"thought"},
-  {num:46,title:"The simplest version of this product needs to ship first.",time:"Today · 09:14",mode:"reflection"},
   {num:47,title:"Positioning — lead with the data moat, not voice capture.",time:"Today · 15:30",mode:"thought"},
 ];
 
@@ -880,7 +873,7 @@ function onScrollS4(){
   const scrolled=Math.max(0,-rect.top);
   const progress=Math.min(1,scrolled/totalScroll);
   // Map 0..1 progress to 0..9 card index
-  const targetIdx=Math.min(s4jots.length-1,Math.floor(progress*s4jots.length));
+  const targetIdx=Math.min(s4jots.length-1,Math.floor(progress*(s4jots.length+1)));
   if(targetIdx>lastRevealIdx){
     for(let i=lastRevealIdx+1;i<=targetIdx;i++){
       revealNext(i);
