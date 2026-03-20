@@ -998,26 +998,22 @@ function handleSubmit(e,btnId){
 }
 </script>
 <script>
-// ── HERO NEURAL NETWORK
+// ── HERO DOT MATRIX (port of JotLoadingMatrix)
 (function(){
   const canvas = document.getElementById('heroParticles');
   const ctx = canvas.getContext('2d');
 
-  let dots = [], pulses = [];
-  let elapsed = 0, lastSpawnTime = 0, lastTimestamp = null;
-
-  const NEIGHBOR_DIST = 0.09;  // normalized — ~2-3 grid steps
-  const MAX_NEIGHBORS = 5;
-  const CASCADE_PROB  = 0.65;
-  const MAX_DEPTH     = 4;
+  let dots = [];
+  let elapsed = 0;
+  let lastSpawnTime = 0;
+  let lastTimestamp = null;
 
   function isMobile(){ return window.innerWidth < 768; }
 
   function buildDotPool(){
     const cols = isMobile() ? 24 : 38;
     const rows = isMobile() ? 20 : 32;
-    dots = []; pulses = [];
-
+    dots = [];
     for(let row = 0; row < rows; row++){
       for(let col = 0; col < cols; col++){
         const jx = (Math.random()*2-1)*0.007;
@@ -1026,55 +1022,10 @@ function handleSubmit(e,btnId){
           px: Math.min(Math.max(col/(cols-1)+jx, 0.02), 0.98),
           py: Math.min(Math.max(row/(rows-1)+jy, 0.02), 0.98),
           isPurple: Math.random() < 0.55,
-          glowDuration: 400 + Math.random()*400,
-          firing: false, glowT: 0, fireStart: 0,
-          neighbors: [],
-        });
-      }
-    }
-
-    // Precompute nearest neighbors (one-time O(n²))
-    const threshold2 = NEIGHBOR_DIST * NEIGHBOR_DIST;
-    for(let i = 0; i < dots.length; i++){
-      const a = dots[i];
-      const near = [];
-      for(let j = 0; j < dots.length; j++){
-        if(i === j) continue;
-        const b = dots[j];
-        const dx = a.px-b.px, dy = a.py-b.py;
-        const d2 = dx*dx + dy*dy;
-        if(d2 < threshold2) near.push({b, d2});
-      }
-      near.sort((x,y) => x.d2 - y.d2);
-      a.neighbors = near.slice(0, MAX_NEIGHBORS).map(n => n.b);
-    }
-  }
-
-  function fireDot(dot, depth){
-    if(dot.firing) return;
-    dot.firing = true;
-    dot.fireStart = elapsed;
-    dot.glowT = 0;
-    if(depth >= MAX_DEPTH) return;
-
-    // Cascade — schedule idle neighbors to fire after a synaptic delay
-    const idle = dot.neighbors.filter(n => !n.firing);
-    for(let i = idle.length-1; i > 0; i--){
-      const j = Math.floor(Math.random()*(i+1));
-      [idle[i], idle[j]] = [idle[j], idle[i]];
-    }
-    const count = Math.min(idle.length, 1 + (Math.random() < 0.45 ? 1 : 0));
-    for(let i = 0; i < count; i++){
-      if(Math.random() < CASCADE_PROB){
-        const target = idle[i];
-        const delay  = 160 + Math.random()*220; // synaptic delay ms
-        pulses.push({
-          sx: dot.px, sy: dot.py,
-          tx: target.px, ty: target.py,
-          startTime: elapsed, duration: delay,
-          isPurple: dot.isPurple,
-          target, depth: depth+1,
-          progress: 0,
+          glowDuration: 350 + Math.random()*451,
+          firing: false,
+          glowT: 0,
+          fireStart: 0
         });
       }
     }
@@ -1098,108 +1049,53 @@ function handleSubmit(e,btnId){
 
     const t = (elapsed % 5000) / 5000; // 0→1 cycling every 5 s
 
-    // Age neurons
+    // Age active dots
     for(const dot of dots){
       if(!dot.firing) continue;
       const age = elapsed - dot.fireStart;
-      if(age >= dot.glowDuration){ dot.firing = false; dot.glowT = 0; }
-      else dot.glowT = Math.sin((age / dot.glowDuration) * Math.PI);
-    }
-
-    // Advance signal pulses — fire targets on arrival
-    const live = [];
-    for(const p of pulses){
-      p.progress = (elapsed - p.startTime) / p.duration;
-      if(p.progress >= 1){
-        if(!p.target.firing) fireDot(p.target, p.depth);
+      if(age >= dot.glowDuration){
+        dot.firing = false; dot.glowT = 0;
       } else {
-        live.push(p);
+        dot.glowT = Math.sin((age / dot.glowDuration) * Math.PI);
       }
     }
-    pulses = live;
 
-    // Seed spawn — spontaneous trigger, cascade does the rest
-    const maxActive = Math.round(1 + t*t*12);
-    const interval  = 900 * Math.pow(0.09, t);
-    const active    = dots.filter(d => d.firing).length;
-    if(elapsed - lastSpawnTime >= interval && active < maxActive){
-      const pool = dots.filter(d => !d.firing);
-      if(pool.length) fireDot(pool[Math.floor(Math.random()*pool.length)], 0);
+    // Spawn
+    const maxDots  = Math.round(1 + t*t*17);
+    const interval = 900 * Math.pow(0.09, t);
+    const firing   = dots.filter(d => d.firing).length;
+    if(elapsed - lastSpawnTime >= interval && firing < maxDots){
+      const batch = Math.max(1, Math.min(3, Math.floor(1 + t*2*Math.random())));
+      const pool  = dots.filter(d => !d.firing);
+      for(let i = pool.length-1; i > 0; i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [pool[i],pool[j]] = [pool[j],pool[i]];
+      }
+      for(let i = 0; i < Math.min(batch, pool.length); i++){
+        pool[i].firing = true; pool[i].fireStart = elapsed; pool[i].glowT = 0;
+      }
       lastSpawnTime = elapsed;
     }
 
+    // Render
     const W = canvas.offsetWidth, H = canvas.offsetHeight;
     ctx.clearRect(0, 0, W, H);
 
-    // ── Layer 1: Axon lines between co-firing neighbors
-    for(const dot of dots){
-      if(!dot.firing || dot.glowT <= 0.05) continue;
-      const ex = Math.min(dot.px, 1-dot.px) / 0.15;
-      const ey = Math.min(dot.py, 1-dot.py) / 0.12;
-      const vig = Math.min(1, ex) * Math.min(1, ey);
-
-      for(const nb of dot.neighbors){
-        if(!nb.firing || nb.glowT <= 0.05) continue;
-        // Draw each pair once only
-        if(dot.px > nb.px || (dot.px === nb.px && dot.py > nb.py)) continue;
-
-        const lineA = Math.min(dot.glowT, nb.glowT) * 0.28 * vig;
-        if(lineA < 0.01) continue;
-
-        ctx.beginPath();
-        ctx.moveTo(dot.px*W, dot.py*H);
-        ctx.lineTo(nb.px*W, nb.py*H);
-        ctx.strokeStyle = dot.isPurple
-          ? `rgba(168,85,247,${lineA.toFixed(3)})`
-          : `rgba(99,102,241,${lineA.toFixed(3)})`;
-        ctx.lineWidth = 0.7;
-        ctx.stroke();
-      }
-    }
-
-    // ── Layer 2: Signal pulses traveling along axons
-    for(const p of pulses){
-      const prog = p.progress;
-      const x = (p.sx + (p.tx - p.sx)*prog) * W;
-      const y = (p.sy + (p.ty - p.sy)*prog) * H;
-
-      // Fading trail from source to current position
-      const trailA = (1-prog) * 0.18;
-      ctx.beginPath();
-      ctx.moveTo(p.sx*W, p.sy*H);
-      ctx.lineTo(x, y);
-      ctx.strokeStyle = p.isPurple
-        ? `rgba(168,85,247,${trailA.toFixed(3)})`
-        : `rgba(99,102,241,${trailA.toFixed(3)})`;
-      ctx.lineWidth = 0.8;
-      ctx.stroke();
-
-      // Bright pulse head — brightens as it arrives
-      const headA = Math.sin(prog * Math.PI) * 0.95;
-      ctx.beginPath();
-      ctx.arc(x, y, 1.8, 0, Math.PI*2);
-      ctx.fillStyle = p.isPurple
-        ? `rgba(220,150,255,${headA.toFixed(3)})`
-        : `rgba(160,150,255,${headA.toFixed(3)})`;
-      ctx.fill();
-    }
-
-    // ── Layer 3: Neuron soma + halo
     for(const dot of dots){
       const g = dot.glowT;
       if(g <= 0.015) continue;
 
-      // Edge vignette
+      // Edge vignette — fade out dots within 15% of left/right and 12% of top/bottom
       const ex = Math.min(dot.px, 1-dot.px) / 0.15;
       const ey = Math.min(dot.py, 1-dot.py) / 0.12;
       const gv = g * Math.min(1, ex) * Math.min(1, ey);
       if(gv <= 0.015) continue;
 
-      const x = dot.px*W, y = dot.py*H;
+      const x = dot.px * W, y = dot.py * H;
 
-      // Halo
+      // Glow halo
       if(gv > 0.1){
-        const gr = 3 + gv*12;
+        const gr = 2 + gv*11;
         const grad = ctx.createRadialGradient(x, y, 0, x, y, gr);
         if(dot.isPurple){
           grad.addColorStop(0,    `rgba(168,85,247,${(gv*0.5).toFixed(3)})`);
@@ -1216,10 +1112,10 @@ function handleSubmit(e,btnId){
         ctx.fill();
       }
 
-      // Soma (cell body — slightly larger than before)
+      // Core dot
       const alpha = Math.min(1, 0.04 + gv*0.94);
       ctx.beginPath();
-      ctx.arc(x, y, 1.2 + gv*1.8, 0, Math.PI*2);
+      ctx.arc(x, y, 0.7 + gv*1.5, 0, Math.PI*2);
       ctx.fillStyle = dot.isPurple
         ? `rgba(185,105,255,${alpha.toFixed(3)})`
         : `rgba(120,110,255,${alpha.toFixed(3)})`;
