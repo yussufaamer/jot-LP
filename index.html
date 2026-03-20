@@ -998,75 +998,133 @@ function handleSubmit(e,btnId){
 }
 </script>
 <script>
-// ── HERO PARTICLES
+// ── HERO DOT MATRIX (port of JotLoadingMatrix)
 (function(){
   const canvas = document.getElementById('heroParticles');
   const ctx = canvas.getContext('2d');
-  let particles = [];
 
-  function resize() {
-    canvas.width = canvas.offsetWidth * (window.devicePixelRatio || 1);
-    canvas.height = canvas.offsetHeight * (window.devicePixelRatio || 1);
-    ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+  let dots = [];
+  let elapsed = 0;
+  let lastSpawnTime = 0;
+  let lastTimestamp = null;
+
+  function isMobile(){ return window.innerWidth < 768; }
+
+  function buildDotPool(){
+    const cols = isMobile() ? 24 : 38;
+    const rows = isMobile() ? 20 : 32;
+    dots = [];
+    for(let row = 0; row < rows; row++){
+      for(let col = 0; col < cols; col++){
+        const jx = (Math.random()*2-1)*0.007;
+        const jy = (Math.random()*2-1)*0.007;
+        dots.push({
+          px: Math.min(Math.max(col/(cols-1)+jx, 0.02), 0.98),
+          py: Math.min(Math.max(row/(rows-1)+jy, 0.02), 0.98),
+          isPurple: Math.random() < 0.55,
+          glowDuration: 350 + Math.random()*451,
+          firing: false,
+          glowT: 0,
+          fireStart: 0
+        });
+      }
+    }
+  }
+
+  function resize(){
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width  = canvas.offsetWidth  * dpr;
+    canvas.height = canvas.offsetHeight * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    buildDotPool();
+    elapsed = 0; lastSpawnTime = 0; lastTimestamp = null;
   }
   resize();
   window.addEventListener('resize', resize);
 
-  function spawn() {
-    return {
-      x: Math.random() * canvas.offsetWidth,
-      y: canvas.offsetHeight * (0.3 + Math.random() * 0.7),
-      r: 0.8 + Math.random() * 2.2,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: -(0.25 + Math.random() * 0.55),
-      alpha: 0,
-      maxAlpha: 0.15 + Math.random() * 0.45,
-      hue: Math.random() > 0.5 ? '#A855F7' : '#6366F1',
-      life: 0,
-      maxLife: 180 + Math.random() * 120,
-    };
-  }
+  function draw(ts){
+    if(lastTimestamp === null) lastTimestamp = ts;
+    elapsed += ts - lastTimestamp;
+    lastTimestamp = ts;
 
-  for (let i = 0; i < 55; i++) {
-    const p = spawn();
-    p.life = Math.random() * p.maxLife;
-    p.y = Math.random() * canvas.offsetHeight;
-    p.alpha = p.maxAlpha * Math.random();
-    particles.push(p);
-  }
+    const t = (elapsed % 5000) / 5000; // 0→1 cycling every 5 s
 
-  function draw() {
-    ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
-    if (particles.length < 55) particles.push(spawn());
-
-    particles.forEach((p, i) => {
-      p.life++;
-      p.x += p.vx;
-      p.y += p.vy;
-
-      const half = p.maxLife / 2;
-      if (p.life < half) {
-        p.alpha = (p.life / half) * p.maxAlpha;
+    // Age active dots
+    for(const dot of dots){
+      if(!dot.firing) continue;
+      const age = elapsed - dot.fireStart;
+      if(age >= dot.glowDuration){
+        dot.firing = false; dot.glowT = 0;
       } else {
-        p.alpha = ((p.maxLife - p.life) / half) * p.maxAlpha;
+        dot.glowT = Math.sin((age / dot.glowDuration) * Math.PI);
+      }
+    }
+
+    // Spawn
+    const maxDots  = Math.round(1 + t*t*17);
+    const interval = 900 * Math.pow(0.09, t);
+    const firing   = dots.filter(d => d.firing).length;
+    if(elapsed - lastSpawnTime >= interval && firing < maxDots){
+      const batch = Math.max(1, Math.min(3, Math.floor(1 + t*2*Math.random())));
+      const pool  = dots.filter(d => !d.firing);
+      for(let i = pool.length-1; i > 0; i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [pool[i],pool[j]] = [pool[j],pool[i]];
+      }
+      for(let i = 0; i < Math.min(batch, pool.length); i++){
+        pool[i].firing = true; pool[i].fireStart = elapsed; pool[i].glowT = 0;
+      }
+      lastSpawnTime = elapsed;
+    }
+
+    // Render
+    const W = canvas.offsetWidth, H = canvas.offsetHeight;
+    ctx.clearRect(0, 0, W, H);
+
+    for(const dot of dots){
+      const g = dot.glowT;
+      if(g <= 0.015) continue;
+
+      // Edge vignette — fade out dots within 15% of left/right and 12% of top/bottom
+      const ex = Math.min(dot.px, 1-dot.px) / 0.15;
+      const ey = Math.min(dot.py, 1-dot.py) / 0.12;
+      const gv = g * Math.min(1, ex) * Math.min(1, ey);
+      if(gv <= 0.015) continue;
+
+      const x = dot.px * W, y = dot.py * H;
+
+      // Glow halo
+      if(gv > 0.1){
+        const gr = 2 + gv*11;
+        const grad = ctx.createRadialGradient(x, y, 0, x, y, gr);
+        if(dot.isPurple){
+          grad.addColorStop(0,    `rgba(168,85,247,${(gv*0.5).toFixed(3)})`);
+          grad.addColorStop(0.45, `rgba(168,85,247,${(gv*0.09).toFixed(3)})`);
+          grad.addColorStop(1,    'rgba(0,0,0,0)');
+        } else {
+          grad.addColorStop(0,    `rgba(99,102,241,${(gv*0.5).toFixed(3)})`);
+          grad.addColorStop(0.45, `rgba(120,100,255,${(gv*0.09).toFixed(3)})`);
+          grad.addColorStop(1,    'rgba(0,0,0,0)');
+        }
+        ctx.beginPath();
+        ctx.arc(x, y, gr, 0, Math.PI*2);
+        ctx.fillStyle = grad;
+        ctx.fill();
       }
 
-      if (p.life >= p.maxLife) {
-        particles[i] = spawn();
-        return;
-      }
-
+      // Core dot
+      const alpha = Math.min(1, 0.04 + gv*0.94);
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = p.hue;
-      ctx.globalAlpha = p.alpha;
+      ctx.arc(x, y, 0.7 + gv*1.5, 0, Math.PI*2);
+      ctx.fillStyle = dot.isPurple
+        ? `rgba(185,105,255,${alpha.toFixed(3)})`
+        : `rgba(120,110,255,${alpha.toFixed(3)})`;
       ctx.fill();
-    });
+    }
 
-    ctx.globalAlpha = 1;
     requestAnimationFrame(draw);
   }
-  draw();
+  requestAnimationFrame(draw);
 })();
 </script>
 </body>
