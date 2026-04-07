@@ -236,22 +236,31 @@ canvas#waveCanvas{width:100%;height:100%;display:block;}
 .sc2-answer-label{font-size:7px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#A855F7;margin-bottom:6px;display:flex;align-items:center;gap:4px;}
 .sc2-answer-text{font-size:10px;color:rgba(255,255,255,0.7);line-height:1.55;}
 
-/* ── SECTION 4: NOTHING FORGOTTEN — STACKING CARDS ── */
-.s4{background:linear-gradient(180deg,var(--bg) 0%,rgba(99,102,241,0.03) 50%,var(--bg) 100%);}
-.s4-layout{display:flex;flex-direction:column;align-items:center;gap:60px;}
-.stack-wrap{position:relative;width:320px;height:280px;}
-.stack-card{position:absolute;width:100%;border-radius:16px;padding:18px;background:var(--surface);border:1px solid var(--border2);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s ease;}
-.stack-card:nth-child(1){transform:translateY(0px) rotate(0deg);z-index:5;background:rgba(168,85,247,0.06);border-color:rgba(168,85,247,0.35);}
-.stack-card:nth-child(2){transform:translateY(8px) rotate(1deg);z-index:4;opacity:.85;}
-.stack-card:nth-child(3){transform:translateY(16px) rotate(-0.8deg);z-index:3;opacity:.65;}
-.stack-card:nth-child(4){transform:translateY(24px) rotate(0.5deg);z-index:2;opacity:.45;}
-.stack-card:nth-child(5){transform:translateY(32px) rotate(-0.3deg);z-index:1;opacity:.25;}
-.stack-jot-num{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:8px;}
-.stack-jot-title{font-size:14px;font-weight:600;color:white;line-height:1.4;margin-bottom:14px;}
-.stack-footer{display:flex;justify-content:space-between;align-items:center;}
-.stack-time{font-size:9px;color:var(--muted2);}
-.counter{font-size:clamp(48px,8vw,88px);font-weight:800;letter-spacing:-2px;line-height:1;}
-.counter-label{font-size:12px;font-weight:600;letter-spacing:1px;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;}
+/* ── SECTION 4: MEMORY GROWS ── */
+.s4-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
+.s4-sticky{position:sticky;top:120px;}
+.memory-phone{width:260px;height:520px;border-radius:40px;border:2px solid rgba(255,255,255,0.1);background:#0E0E10;overflow:hidden;box-shadow:0 32px 100px rgba(0,0,0,0.7),0 0 0 1px rgba(168,85,247,0.08);margin:0 auto;}
+.memory-phone-inner{width:100%;height:100%;overflow:hidden;position:relative;}
+.memory-phone-header{padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between;background:#0E0E10;position:relative;z-index:10;}
+.memory-phone-wm{font-size:10px;font-weight:800;letter-spacing:3px;background:linear-gradient(135deg,#A855F7,#6366F1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.memory-phone-count{font-size:8px;font-weight:700;color:rgba(255,255,255,0.25);}
+.memory-chat-bar{margin:0 10px 8px;background:#1A0A2E;border:1px solid rgba(168,85,247,0.35);border-radius:10px;padding:8px 10px;display:flex;align-items:center;gap:6px;}
+.memory-cards-wrap{overflow:hidden;position:relative;height:390px;}
+.memory-cards-inner{display:flex;flex-direction:column;gap:6px;padding:0 10px 10px;will-change:transform;transition:none;}
+.memory-card{background:#141416;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px;flex-shrink:0;}
+.memory-card.thought{background:rgba(168,85,247,0.04);border-color:rgba(168,85,247,0.18);}
+.memory-card.reflection{background:rgba(99,102,241,0.04);border-color:rgba(99,102,241,0.18);}
+.mc-row{display:flex;align-items:center;gap:4px;margin-bottom:4px;}
+.mc-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0;}
+.mc-num{font-size:7px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.2);}
+.mc-title{font-size:9px;font-weight:700;color:rgba(255,255,255,0.7);line-height:1.35;margin-bottom:6px;}
+.mc-foot{display:flex;justify-content:space-between;align-items:center;}
+.mc-tag{font-size:6px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;padding:2px 6px;border-radius:20px;}
+.mc-date{font-size:6.5px;color:rgba(255,255,255,0.2);}
+.s4-copy{padding-top:40px;}
+.memory-counter{font-size:clamp(48px,8vw,88px);font-weight:800;letter-spacing:-2px;line-height:1;}
+.memory-counter-label{font-size:12px;font-weight:600;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-top:8px;}
+@media(max-width:768px){.s4-layout{grid-template-columns:1fr;}.s4-sticky{position:relative;top:0;}}
 
 /* ── BOTTOM CTA ── */
 .bottom-cta{padding:140px 24px;text-align:center;position:relative;overflow:hidden;}
@@ -956,41 +965,61 @@ footer span:last-child{justify-self:end;}
 <div class="div"></div>
 
 <!-- ══════════════════════════════════════
-     SECTION 4 — NOTHING FORGOTTEN
-     Sticky scroll-driven stack
+     SECTION 4 — MEMORY GROWS
 ══════════════════════════════════════ -->
-<div id="s4-outer" style="position:relative;">
+<section class="section s4" id="s4" style="min-height:160vh;padding-bottom:0;">
+  <div class="section-inner" style="max-width:900px;">
+    <div class="s4-layout">
 
-  <!-- Sticky panel — sticks while user scrolls through spacer -->
-  <div id="s4-sticky" style="position:sticky;top:0;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;background:var(--bg);overflow:hidden;">
+      <!-- STICKY PHONE -->
+      <div class="s4-sticky">
+        <div class="memory-phone">
+          <div class="memory-phone-inner">
+            <div class="memory-phone-header">
+              <span class="memory-phone-wm">JOT</span>
+              <span class="memory-phone-count" id="phoneCount">77 JOTs</span>
+            </div>
+            <div class="memory-chat-bar">
+              <span style="font-size:10px;color:#A855F7;">✦</span>
+              <span style="font-size:8px;color:rgba(255,255,255,0.25);flex:1;">Ask your JOTs anything...</span>
+              <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#A855F7,#6366F1);display:flex;align-items:center;justify-content:center;">
+                <svg width="8" height="10" viewBox="0 0 20 24" fill="none"><rect x="6" y="0" width="8" height="13" rx="4" fill="white"/><path d="M2 11 Q2 18 10 18 Q18 18 18 11" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/><line x1="10" y1="18" x2="10" y2="22" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
+              </div>
+            </div>
+            <div class="memory-cards-wrap">
+              <div class="memory-cards-inner" id="memoryCardsInner">
+                <div class="memory-card thought"><div class="mc-row"><div class="mc-dot" style="background:#A855F7;opacity:.5;"></div><span class="mc-num">JOT #77</span></div><div class="mc-title">Lead with permanent memory, not voice capture</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(168,85,247,.1);color:#A855F7;border:1px solid rgba(168,85,247,.2);">Thought</span><span class="mc-date">Today · 09:41</span></div></div>
+                <div class="memory-card reflection"><div class="mc-row"><div class="mc-dot" style="background:#6366F1;opacity:.5;"></div><span class="mc-num">JOT #76</span></div><div class="mc-title">I keep second-guessing the pricing. What does that say?</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(99,102,241,.1);color:#818CF8;border:1px solid rgba(99,102,241,.2);">Reflection</span><span class="mc-date">Today · 08:12</span></div></div>
+                <div class="memory-card thought"><div class="mc-row"><div class="mc-dot" style="background:#A855F7;opacity:.5;"></div><span class="mc-num">JOT #75</span></div><div class="mc-title">Distribution is the only thing that matters right now</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(168,85,247,.1);color:#A855F7;border:1px solid rgba(168,85,247,.2);">Thought</span><span class="mc-date">Yesterday · 22:47</span></div></div>
+                <div class="memory-card reflection"><div class="mc-row"><div class="mc-dot" style="background:#6366F1;opacity:.5;"></div><span class="mc-num">JOT #74</span></div><div class="mc-title">Love seeing people try things. Something really cool about that.</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(99,102,241,.1);color:#818CF8;border:1px solid rgba(99,102,241,.2);">Reflection</span><span class="mc-date">Yesterday · 20:09</span></div></div>
+                <div class="memory-card thought"><div class="mc-row"><div class="mc-dot" style="background:#A855F7;opacity:.5;"></div><span class="mc-num">JOT #73</span></div><div class="mc-title">Ship the simplest version. Then listen.</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(168,85,247,.1);color:#A855F7;border:1px solid rgba(168,85,247,.2);">Thought</span><span class="mc-date">2 days ago · 17:33</span></div></div>
+                <div class="memory-card reflection"><div class="mc-row"><div class="mc-dot" style="background:#6366F1;opacity:.5;"></div><span class="mc-num">JOT #72</span></div><div class="mc-title">Why does launching feel harder than building?</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(99,102,241,.1);color:#818CF8;border:1px solid rgba(99,102,241,.2);">Reflection</span><span class="mc-date">2 days ago · 11:04</span></div></div>
+                <div class="memory-card thought"><div class="mc-row"><div class="mc-dot" style="background:#A855F7;opacity:.5;"></div><span class="mc-num">JOT #71</span></div><div class="mc-title">The ADHD community on Android is completely underserved</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(168,85,247,.1);color:#A855F7;border:1px solid rgba(168,85,247,.2);">Thought</span><span class="mc-date">3 days ago · 09:21</span></div></div>
+                <div class="memory-card thought"><div class="mc-row"><div class="mc-dot" style="background:#A855F7;opacity:.5;"></div><span class="mc-num">JOT #70</span></div><div class="mc-title">Voice is the only input that keeps up with how I think</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(168,85,247,.1);color:#A855F7;border:1px solid rgba(168,85,247,.2);">Thought</span><span class="mc-date">3 days ago · 07:58</span></div></div>
+                <div class="memory-card reflection"><div class="mc-row"><div class="mc-dot" style="background:#6366F1;opacity:.5;"></div><span class="mc-num">JOT #69</span></div><div class="mc-title">Three months in. I actually built something real.</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(99,102,241,.1);color:#818CF8;border:1px solid rgba(99,102,241,.2);">Reflection</span><span class="mc-date">4 days ago · 23:11</span></div></div>
+                <div class="memory-card thought"><div class="mc-row"><div class="mc-dot" style="background:#A855F7;opacity:.5;"></div><span class="mc-num">JOT #68</span></div><div class="mc-title">Personal brand compounds across every product I build</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(168,85,247,.1);color:#A855F7;border:1px solid rgba(168,85,247,.2);">Thought</span><span class="mc-date">5 days ago · 14:22</span></div></div>
+                <div class="memory-card reflection"><div class="mc-row"><div class="mc-dot" style="background:#6366F1;opacity:.5;"></div><span class="mc-num">JOT #67</span></div><div class="mc-title">100 engaged strangers beats 10,000 passive followers</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(99,102,241,.1);color:#818CF8;border:1px solid rgba(99,102,241,.2);">Reflection</span><span class="mc-date">5 days ago · 09:03</span></div></div>
+                <div class="memory-card thought"><div class="mc-row"><div class="mc-dot" style="background:#A855F7;opacity:.5;"></div><span class="mc-num">JOT #66</span></div><div class="mc-title">Friction is the enemy. Every extra tap is a problem.</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(168,85,247,.1);color:#A855F7;border:1px solid rgba(168,85,247,.2);">Thought</span><span class="mc-date">1 week ago · 16:44</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <!-- background glow -->
-    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:500px;background:radial-gradient(ellipse,rgba(99,102,241,0.06) 0%,transparent 70%);pointer-events:none;"></div>
+      <!-- COPY -->
+      <div class="s4-copy">
+        <p class="section-eye" data-reveal>Your memory compounds</p>
+        <h2 class="section-title" data-reveal>Every thought.<br>Numbered.<br><span class="g">Remembered forever.</span></h2>
+        <p class="section-sub" data-reveal style="margin-bottom:48px;">JOT #1 is as findable as JOT #500. Six months of JOTs is a searchable record of how you actually think and what you actually care about. Nothing gets buried. Nothing gets lost.</p>
+        <div style="opacity:0;transform:translateY(16px);transition:opacity .6s ease .3s,transform .6s ease .3s;" data-reveal>
+          <div class="memory-counter g" id="memCounter">0</div>
+          <div class="memory-counter-label">JOTs in your memory</div>
+        </div>
+      </div>
 
-    <!-- Copy -->
-    <div style="margin-bottom:24px;z-index:2;position:relative;text-align:left;">
-      <p style="font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:16px;">Nothing forgotten</p>
-      <h2 style="font-size:clamp(30px,4vw,50px);font-weight:800;color:white;letter-spacing:-1px;line-height:1.15;margin-bottom:16px;">Every thought.<br>Numbered.<br>Remembered forever.</h2>
-      <p style="font-size:16px;color:var(--muted);line-height:1.7;max-width:420px;">JOT #1 is as findable as JOT #500. Your memory compounds. Six months of JOTs is a searchable record of how you actually think and what you actually care about. Nothing gets buried. Nothing gets lost.</p>
     </div>
-
-    <!-- Counter — updates as cards arrive -->
-    <div style="text-align:center;margin-bottom:28px;z-index:2;position:relative;">
-      <div class="counter g" id="s4counter">0</div>
-      <div class="counter-label" style="margin-top:6px;">JOTs in your memory</div>
-    </div>
-
-    <!-- Stack box — tall enough for cards + offset, clips overflow -->
-    <div style="position:relative;width:320px;height:200px;z-index:2;" id="s4stack"></div>
-
-    <!-- scroll hint -->
-    <p style="position:absolute;bottom:36px;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);opacity:0.5;">Scroll to build your memory</p>
   </div>
-
-  <!-- Scroll spacer — 300vh gives smooth scroll-driven feel -->
-  <div style="height:300vh;"></div>
-
-</div>
+</section>
 
 <div class="div"></div>
 
@@ -1644,139 +1673,46 @@ function runChat(){
   },42);
 }
 
-// ── STACKING CARDS + COUNTER on scroll
-// ── SECTION 4: SCROLL-DRIVEN STACK
-const s4jots=[
-  {num:1, title:"The idea I keep forgetting before I can write it down.", time:"6 months ago", mode:"thought"},
-  {num:24, title:"Why does my brain only work at 11pm.", time:"2 months ago", mode:"reflection"},
-  {num:47, title:"Finally captured the thing I've been trying to say for weeks.", time:"Today · 15:30", mode:"thought"},
-];
+// ── SECTION 4: SCROLL-DRIVEN PHONE + COUNTER
+const s4Section = document.getElementById('s4');
+const memCardsInner = document.getElementById('memoryCardsInner');
+const memCounter = document.getElementById('memCounter');
+const phoneCountEl = document.getElementById('phoneCount');
+let s4CounterDone = false;
 
-const tagStyles={
-  thought:"background:rgba(168,85,247,0.12);color:#A855F7;border:1px solid rgba(168,85,247,0.25);",
-  reflection:"background:rgba(99,102,241,0.12);color:#818CF8;border:1px solid rgba(99,102,241,0.25);"
-};
-
-// Track which cards are visible — none at start
-let revealedCards=[];
-let lastRevealIdx=-1;
-
-function buildCard(jot){
-  const card=document.createElement('div');
-  // Start invisible, below the stack — no transition yet
-  card.style.cssText=[
-    'position:absolute',
-    'bottom:0',
-    'left:0',
-    'right:0',
-    'border-radius:16px',
-    'padding:16px 18px',
-    'background:#1B1B1D',
-    'border:1px solid #3A3A3C',
-    'opacity:0',
-    'transform:translateY(80px)',
-    'will-change:transform,opacity',
-    'box-shadow:none',
-  ].join(';');
-  card.innerHTML=
-    '<div style="font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:8px;">JOT #'+jot.num+'</div>'+
-    '<div style="font-size:14px;font-weight:600;color:white;line-height:1.4;margin-bottom:12px;">'+jot.title+'</div>'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;">'+
-      '<span style="font-size:9px;color:var(--muted2);">'+jot.time+'</span>'+
-      '<span style="font-size:7px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;padding:3px 9px;border-radius:20px;'+tagStyles[jot.mode]+'">'+jot.mode+'</span>'+
-    '</div>';
-  return card;
+function animateMemCounter(target){
+  if(s4CounterDone) return;
+  s4CounterDone = true;
+  let current = 0;
+  const step = () => {
+    current = Math.min(target, current + Math.ceil((target - current) / 8) || 1);
+    if(memCounter) memCounter.textContent = current;
+    if(phoneCountEl) phoneCountEl.textContent = current + ' JOTs';
+    if(current < target) setTimeout(step, 30);
+  };
+  step();
 }
 
-function repositionVisible(){
-  const yOff=[0,10,20,30];
-  const rot=[0,1.2,-0.8,0.5];
-  const sc=[1,0.96,0.92,0.88];
-  const len=revealedCards.length;
-  revealedCards.forEach((card,i)=>{
-    const pos=len-1-i; // 0=top of stack, higher=further back
-    if(pos===0){
-      // Top card — fully visible, solid purple-tinted bg
-      card.style.transition='transform .5s cubic-bezier(.34,1.56,.64,1),opacity .4s ease';
-      card.style.transform='translateY(0px) rotate(0deg) scale(1)';
-      card.style.opacity='1';
-      card.style.zIndex='20';
-      card.style.background='#1e1a2e';
-      card.style.borderColor='rgba(168,85,247,0.45)';
-      card.style.boxShadow='0 8px 32px rgba(168,85,247,0.15)';
-    } else if(pos===1){
-      card.style.transition='transform .5s cubic-bezier(.34,1.56,.64,1),opacity .4s ease';
-      card.style.transform='translateY(12px) rotate(1deg) scale(0.96)';
-      card.style.opacity='1';
-      card.style.zIndex='19';
-      card.style.background='#1B1B1D';
-      card.style.borderColor='#3A3A3C';
-      card.style.boxShadow='none';
-    } else if(pos===2){
-      card.style.transition='transform .5s cubic-bezier(.34,1.56,.64,1),opacity .4s ease';
-      card.style.transform='translateY(22px) rotate(-0.6deg) scale(0.92)';
-      card.style.opacity='0.7';
-      card.style.zIndex='18';
-      card.style.background='#1B1B1D';
-      card.style.borderColor='#2A2A2E';
-      card.style.boxShadow='none';
-    } else if(pos===3){
-      card.style.transition='transform .5s cubic-bezier(.34,1.56,.64,1),opacity .4s ease';
-      card.style.transform='translateY(30px) rotate(0.4deg) scale(0.88)';
-      card.style.opacity='0.4';
-      card.style.zIndex='17';
-      card.style.background='#1B1B1D';
-      card.style.borderColor='#2A2A2E';
-      card.style.boxShadow='none';
-    } else {
-      // Anything deeper — completely hidden, no peekthrough
-      card.style.transition='opacity .2s ease';
-      card.style.opacity='0';
-      card.style.zIndex='1';
-      card.style.pointerEvents='none';
-    }
+const s4CountObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting) animateMemCounter(77);
   });
+}, {threshold: 0.1});
+if(s4Section) s4CountObs.observe(s4Section);
+
+function updateMemoryScroll(){
+  if(!s4Section || !memCardsInner) return;
+  const rect = s4Section.getBoundingClientRect();
+  const sectionH = s4Section.offsetHeight;
+  const winH = window.innerHeight;
+  const progress = Math.max(0, Math.min(1, (-rect.top) / (sectionH - winH)));
+  const maxScroll = memCardsInner.scrollHeight - memCardsInner.parentElement.offsetHeight;
+  const scrollPx = progress * maxScroll;
+  memCardsInner.style.transform = 'translateY(-' + scrollPx + 'px)';
 }
 
-function revealNext(idx){
-  if(idx>=s4jots.length)return;
-  const stack=document.getElementById('s4stack');
-  const card=buildCard(s4jots[idx]);
-  stack.appendChild(card);
-  revealedCards.push(card);
-  // Force layout, then add transition and animate in
-  card.getBoundingClientRect();
-  requestAnimationFrame(()=>{
-    card.style.transition='transform .55s cubic-bezier(.34,1.56,.64,1),opacity .45s ease';
-    card.style.opacity='1';
-    card.style.transform='translateY(0)';
-    // After card arrives, reposition whole stack
-    setTimeout(repositionVisible,50);
-  });
-  // Update counter
-  document.getElementById('s4counter').textContent=s4jots[idx].num;
-}
-
-// Scroll handler — maps scroll progress to card reveals
-const s4outer=document.getElementById('s4-outer');
-function onScrollS4(){
-  if(!s4outer)return;
-  const rect=s4outer.getBoundingClientRect();
-  const totalScroll=s4outer.offsetHeight-window.innerHeight;
-  if(totalScroll<=0)return;
-  const scrolled=Math.max(0,-rect.top);
-  const progress=Math.min(1,scrolled/totalScroll);
-  // Map 0..1 progress to 0..9 card index
-  const targetIdx=Math.min(s4jots.length-1,Math.floor(progress*(s4jots.length+1)));
-  if(targetIdx>lastRevealIdx){
-    for(let i=lastRevealIdx+1;i<=targetIdx;i++){
-      revealNext(i);
-    }
-    lastRevealIdx=targetIdx;
-  }
-}
-
-window.addEventListener('scroll',onScrollS4,{passive:true});
+window.addEventListener('scroll', updateMemoryScroll, {passive: true});
+updateMemoryScroll();
 
 // ── SECTION 5: MULTILINGUAL FLOATING WORDS
 const langPhrases=[
