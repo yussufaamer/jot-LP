@@ -238,25 +238,12 @@ canvas#waveCanvas{width:100%;height:100%;display:block;}
 
 /* ── SECTION 4: MEMORY GROWS ── */
 .s4-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
-.s4-sticky{position:sticky;top:120px;}
+.s4-sticky{position:relative;}
 .memory-phone{width:260px;height:520px;border-radius:40px;border:2px solid rgba(255,255,255,0.1);background:#0E0E10;overflow:hidden;box-shadow:0 32px 100px rgba(0,0,0,0.7),0 0 0 1px rgba(168,85,247,0.08);margin:0 auto;}
-.memory-phone-inner{width:100%;height:100%;overflow:hidden;position:relative;}
-.memory-phone-header{padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between;background:#0E0E10;position:relative;z-index:10;}
-.memory-phone-wm{font-size:10px;font-weight:800;letter-spacing:3px;background:linear-gradient(135deg,#A855F7,#6366F1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.memory-phone-count{font-size:8px;font-weight:700;color:rgba(255,255,255,0.25);}
-.memory-chat-bar{margin:0 10px 8px;background:#1A0A2E;border:1px solid rgba(168,85,247,0.35);border-radius:10px;padding:8px 10px;display:flex;align-items:center;gap:6px;}
-.memory-cards-wrap{overflow:hidden;position:relative;height:390px;}
-.memory-cards-inner{display:flex;flex-direction:column;gap:6px;padding:0 10px 10px;will-change:transform;transition:none;}
-.memory-card{background:#141416;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px;flex-shrink:0;}
-.memory-card.thought{background:rgba(168,85,247,0.04);border-color:rgba(168,85,247,0.18);}
-.memory-card.reflection{background:rgba(99,102,241,0.04);border-color:rgba(99,102,241,0.18);}
-.mc-row{display:flex;align-items:center;gap:4px;margin-bottom:4px;}
-.mc-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0;}
-.mc-num{font-size:7px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.2);}
-.mc-title{font-size:9px;font-weight:700;color:rgba(255,255,255,0.7);line-height:1.35;margin-bottom:6px;}
-.mc-foot{display:flex;justify-content:space-between;align-items:center;}
-.mc-tag{font-size:6px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;padding:2px 6px;border-radius:20px;}
-.mc-date{font-size:6.5px;color:rgba(255,255,255,0.2);}
+.memory-phone-inner{width:100%;height:100%;overflow:hidden;position:relative;display:flex;flex-direction:column;background:#0E0E10;}
+.memory-chat-bar{margin:18px 14px 14px;background:rgba(168,85,247,0.05);border:1px solid rgba(168,85,247,0.25);border-radius:24px;padding:8px 10px 8px 14px;display:flex;align-items:center;justify-content:space-between;}
+.memory-cards-wrap{flex:1;overflow-y:auto;overscroll-behavior:contain;padding-bottom:100px;}
+.memory-cards-wrap::-webkit-scrollbar{display:none;}
 .s4-copy{padding-top:40px;}
 .memory-counter{font-size:clamp(48px,8vw,88px);font-weight:800;letter-spacing:-2px;line-height:1;}
 .memory-counter-label{font-size:12px;font-weight:600;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-top:8px;}
@@ -967,7 +954,7 @@ footer span:last-child{justify-self:end;}
 <!-- ══════════════════════════════════════
      SECTION 4 — MEMORY GROWS
 ══════════════════════════════════════ -->
-<section class="section s4" id="s4" style="min-height:160vh;padding-bottom:0;">
+<section class="section s4" id="s4">
   <div class="section-inner" style="max-width:900px;">
     <div class="s4-layout">
 
@@ -975,33 +962,93 @@ footer span:last-child{justify-self:end;}
       <div class="s4-sticky">
         <div class="memory-phone">
           <div class="memory-phone-inner">
-            <div class="memory-phone-header">
-              <span class="memory-phone-wm">JOT</span>
-              <span class="memory-phone-count" id="phoneCount">77 JOTs</span>
-            </div>
+            <div class="sc-wordmark" style="margin-top:20px;margin-bottom:0;">JOT</div>
+            
             <div class="memory-chat-bar">
-              <span style="font-size:10px;color:#A855F7;">✦</span>
-              <span style="font-size:8px;color:rgba(255,255,255,0.25);flex:1;">Ask your JOTs anything...</span>
-              <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#A855F7,#6366F1);display:flex;align-items:center;justify-content:center;">
-                <svg width="8" height="10" viewBox="0 0 20 24" fill="none"><rect x="6" y="0" width="8" height="13" rx="4" fill="white"/><path d="M2 11 Q2 18 10 18 Q18 18 18 11" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/><line x1="10" y1="18" x2="10" y2="22" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:12px;color:#A855F7;">✦</span>
+                <span style="font-size:10px;color:rgba(255,255,255,0.4);">Ask your JOTs anything...</span>
+              </div>
+              <div style="width:28px;height:28px;border-radius:50%;background:#A855F7;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="10" height="12" viewBox="0 0 20 24" fill="none"><rect x="6" y="0" width="8" height="13" rx="4" fill="white"/><path d="M2 11 Q2 18 10 18 Q18 18 18 11" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/><line x1="10" y1="18" x2="10" y2="22" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
               </div>
             </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:0 14px;margin-bottom:12px;">
+              <span style="font-size:10px;color:rgba(255,255,255,0.35);">20+ JOTs</span>
+              <span style="font-size:10px;color:rgba(255,255,255,0.35);">Recent ↓</span>
+            </div>
+
             <div class="memory-cards-wrap">
-              <div class="memory-cards-inner" id="memoryCardsInner">
-                <div class="memory-card thought"><div class="mc-row"><div class="mc-dot" style="background:#A855F7;opacity:.5;"></div><span class="mc-num">JOT #77</span></div><div class="mc-title">Lead with permanent memory, not voice capture</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(168,85,247,.1);color:#A855F7;border:1px solid rgba(168,85,247,.2);">Thought</span><span class="mc-date">Today · 09:41</span></div></div>
-                <div class="memory-card reflection"><div class="mc-row"><div class="mc-dot" style="background:#6366F1;opacity:.5;"></div><span class="mc-num">JOT #76</span></div><div class="mc-title">I keep second-guessing the pricing. What does that say?</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(99,102,241,.1);color:#818CF8;border:1px solid rgba(99,102,241,.2);">Reflection</span><span class="mc-date">Today · 08:12</span></div></div>
-                <div class="memory-card thought"><div class="mc-row"><div class="mc-dot" style="background:#A855F7;opacity:.5;"></div><span class="mc-num">JOT #75</span></div><div class="mc-title">Distribution is the only thing that matters right now</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(168,85,247,.1);color:#A855F7;border:1px solid rgba(168,85,247,.2);">Thought</span><span class="mc-date">Yesterday · 22:47</span></div></div>
-                <div class="memory-card reflection"><div class="mc-row"><div class="mc-dot" style="background:#6366F1;opacity:.5;"></div><span class="mc-num">JOT #74</span></div><div class="mc-title">Love seeing people try things. Something really cool about that.</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(99,102,241,.1);color:#818CF8;border:1px solid rgba(99,102,241,.2);">Reflection</span><span class="mc-date">Yesterday · 20:09</span></div></div>
-                <div class="memory-card thought"><div class="mc-row"><div class="mc-dot" style="background:#A855F7;opacity:.5;"></div><span class="mc-num">JOT #73</span></div><div class="mc-title">Ship the simplest version. Then listen.</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(168,85,247,.1);color:#A855F7;border:1px solid rgba(168,85,247,.2);">Thought</span><span class="mc-date">2 days ago · 17:33</span></div></div>
-                <div class="memory-card reflection"><div class="mc-row"><div class="mc-dot" style="background:#6366F1;opacity:.5;"></div><span class="mc-num">JOT #72</span></div><div class="mc-title">Why does launching feel harder than building?</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(99,102,241,.1);color:#818CF8;border:1px solid rgba(99,102,241,.2);">Reflection</span><span class="mc-date">2 days ago · 11:04</span></div></div>
-                <div class="memory-card thought"><div class="mc-row"><div class="mc-dot" style="background:#A855F7;opacity:.5;"></div><span class="mc-num">JOT #71</span></div><div class="mc-title">The ADHD community on Android is completely underserved</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(168,85,247,.1);color:#A855F7;border:1px solid rgba(168,85,247,.2);">Thought</span><span class="mc-date">3 days ago · 09:21</span></div></div>
-                <div class="memory-card thought"><div class="mc-row"><div class="mc-dot" style="background:#A855F7;opacity:.5;"></div><span class="mc-num">JOT #70</span></div><div class="mc-title">Voice is the only input that keeps up with how I think</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(168,85,247,.1);color:#A855F7;border:1px solid rgba(168,85,247,.2);">Thought</span><span class="mc-date">3 days ago · 07:58</span></div></div>
-                <div class="memory-card reflection"><div class="mc-row"><div class="mc-dot" style="background:#6366F1;opacity:.5;"></div><span class="mc-num">JOT #69</span></div><div class="mc-title">Three months in. I actually built something real.</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(99,102,241,.1);color:#818CF8;border:1px solid rgba(99,102,241,.2);">Reflection</span><span class="mc-date">4 days ago · 23:11</span></div></div>
-                <div class="memory-card thought"><div class="mc-row"><div class="mc-dot" style="background:#A855F7;opacity:.5;"></div><span class="mc-num">JOT #68</span></div><div class="mc-title">Personal brand compounds across every product I build</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(168,85,247,.1);color:#A855F7;border:1px solid rgba(168,85,247,.2);">Thought</span><span class="mc-date">5 days ago · 14:22</span></div></div>
-                <div class="memory-card reflection"><div class="mc-row"><div class="mc-dot" style="background:#6366F1;opacity:.5;"></div><span class="mc-num">JOT #67</span></div><div class="mc-title">100 engaged strangers beats 10,000 passive followers</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(99,102,241,.1);color:#818CF8;border:1px solid rgba(99,102,241,.2);">Reflection</span><span class="mc-date">5 days ago · 09:03</span></div></div>
-                <div class="memory-card thought"><div class="mc-row"><div class="mc-dot" style="background:#A855F7;opacity:.5;"></div><span class="mc-num">JOT #66</span></div><div class="mc-title">Friction is the enemy. Every extra tap is a problem.</div><div class="mc-foot"><span class="mc-tag" style="background:rgba(168,85,247,.1);color:#A855F7;border:1px solid rgba(168,85,247,.2);">Thought</span><span class="mc-date">1 week ago · 16:44</span></div></div>
+              <div class="sc2-grid" style="grid-template-columns: 1fr 1fr; gap: 8px; padding:0 14px;">
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #32</div>
+                  <div class="sc2-title">My best ideas always come when I can't write them down</div>
+                  <div class="sc2-foot"><span class="sc2-tag">THOUGHT</span><span class="sc2-date">4 Apr</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #31</div>
+                  <div class="sc2-title">I think I need to change careers but I don't know what to</div>
+                  <div class="sc2-foot"><span class="sc2-tag">THOUGHT</span><span class="sc2-date">3 Apr</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #30</div>
+                  <div class="sc2-title">How do I know what I actually want?</div>
+                  <div class="sc2-foot"><span class="sc2-tag">THOUGHT</span><span class="sc2-date">3 Apr</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #29</div>
+                  <div class="sc2-title">Finally felt focused today</div>
+                  <div class="sc2-foot"><span class="sc2-tag" style="color:#818CF8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.2);">REFLECTION</span><span class="sc2-date">3 Apr</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #28</div>
+                  <div class="sc2-title">Meeting was a waste of time again</div>
+                  <div class="sc2-foot"><span class="sc2-tag">THOUGHT</span><span class="sc2-date">3 Apr</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #27</div>
+                  <div class="sc2-title">The problem with perfectionism</div>
+                  <div class="sc2-foot"><span class="sc2-tag">THOUGHT</span><span class="sc2-date">2 Apr</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #26</div>
+                  <div class="sc2-title">I should read more non-fiction</div>
+                  <div class="sc2-foot"><span class="sc2-tag">THOUGHT</span><span class="sc2-date">2 Apr</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #25</div>
+                  <div class="sc2-title">Called mum, felt better instantly</div>
+                  <div class="sc2-foot"><span class="sc2-tag" style="color:#818CF8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.2);">REFLECTION</span><span class="sc2-date">1 Apr</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #24</div>
+                  <div class="sc2-title">The gym was packed again.</div>
+                  <div class="sc2-foot"><span class="sc2-tag">THOUGHT</span><span class="sc2-date">1 Apr</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #23</div>
+                  <div class="sc2-title">Need to re-evaluate pricing model</div>
+                  <div class="sc2-foot"><span class="sc2-tag">THOUGHT</span><span class="sc2-date">31 Mar</span></div>
+                </div>
               </div>
             </div>
+
+            <div class="sc-bottom-nav" style="position:absolute;bottom:0;width:100%;z-index:20;">
+              <div class="sc-nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="9" y="2" width="6" height="12" rx="3" fill="rgba(255,255,255,0.3)"/><path d="M5 10a7 7 0 0014 0" stroke="rgba(255,255,255,0.3)" stroke-width="1.8" stroke-linecap="round" fill="none"/><line x1="12" y1="17" x2="12" y2="21" stroke="rgba(255,255,255,0.3)" stroke-width="1.8" stroke-linecap="round"/><line x1="9" y1="21" x2="15" y2="21" stroke="rgba(255,255,255,0.3)" stroke-width="1.8" stroke-linecap="round"/></svg>
+                <span>Record</span>
+              </div>
+              <div class="sc-nav-item sc-nav-jots">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="8" height="5" rx="1.5" fill="#A855F7"/><rect x="13" y="4" width="8" height="5" rx="1.5" fill="#A855F7"/><rect x="3" y="12" width="8" height="5" rx="1.5" fill="#A855F7"/><rect x="13" y="12" width="8" height="5" rx="1.5" fill="#A855F7"/></svg>
+                <span style="color:#A855F7;">JOTs</span>
+              </div>
+              <div class="sc-nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><line x1="4" y1="6" x2="20" y2="6" stroke="rgba(255,255,255,0.3)" stroke-width="1.8" stroke-linecap="round"/><line x1="4" y1="12" x2="14" y2="12" stroke="rgba(255,255,255,0.3)" stroke-width="1.8" stroke-linecap="round"/><line x1="4" y1="18" x2="20" y2="18" stroke="rgba(255,255,255,0.3)" stroke-width="1.8" stroke-linecap="round"/></svg>
+                <span>Settings</span>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -1673,11 +1720,9 @@ function runChat(){
   },42);
 }
 
-// ── SECTION 4: SCROLL-DRIVEN PHONE + COUNTER
+// ── SECTION 4: COUNTER
 const s4Section = document.getElementById('s4');
-const memCardsInner = document.getElementById('memoryCardsInner');
 const memCounter = document.getElementById('memCounter');
-const phoneCountEl = document.getElementById('phoneCount');
 let s4CounterDone = false;
 
 function animateMemCounter(target){
@@ -1687,7 +1732,6 @@ function animateMemCounter(target){
   const step = () => {
     current = Math.min(target, current + Math.ceil((target - current) / 8) || 1);
     if(memCounter) memCounter.textContent = current;
-    if(phoneCountEl) phoneCountEl.textContent = current + ' JOTs';
     if(current < target) setTimeout(step, 30);
   };
   step();
@@ -1699,20 +1743,6 @@ const s4CountObs = new IntersectionObserver((entries) => {
   });
 }, {threshold: 0.1});
 if(s4Section) s4CountObs.observe(s4Section);
-
-function updateMemoryScroll(){
-  if(!s4Section || !memCardsInner) return;
-  const rect = s4Section.getBoundingClientRect();
-  const sectionH = s4Section.offsetHeight;
-  const winH = window.innerHeight;
-  const progress = Math.max(0, Math.min(1, (-rect.top) / (sectionH - winH)));
-  const maxScroll = memCardsInner.scrollHeight - memCardsInner.parentElement.offsetHeight;
-  const scrollPx = progress * maxScroll;
-  memCardsInner.style.transform = 'translateY(-' + scrollPx + 'px)';
-}
-
-window.addEventListener('scroll', updateMemoryScroll, {passive: true});
-updateMemoryScroll();
 
 // ── SECTION 5: MULTILINGUAL FLOATING WORDS
 const langPhrases=[
