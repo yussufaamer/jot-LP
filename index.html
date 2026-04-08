@@ -834,52 +834,54 @@ footer span:last-child{justify-self:end;}
   <div class="section-inner">
     <div class="s3-layout">
       <div>
-        <p class="section-eye" data-reveal>Your memory, on demand</p>
-        <h2 class="section-title" data-reveal>Ask your JOTs<br>anything.</h2>
-        <p class="section-sub" data-reveal style="margin-bottom:32px;">Every thought you've ever recorded is searchable — not by keyword, by meaning. Ask a question in plain English and get an answer drawn from your own words, your own thinking, your own memory. The longer you use JOT, the smarter it gets.</p>
+        <p class="section-eye" data-reveal>After every JOT</p>
+        <h2 class="section-title" data-reveal>JOT noticed<br>something.<br><span class="g">You didn't.</span></h2>
+        <p class="section-sub" data-reveal style="margin-bottom:32px;">You don't have to ask. After every recording, JOT reads your recent thoughts and surfaces something worth sitting with — a pattern you keep returning to, a contradiction in your thinking, or a question you haven't faced yet.</p>
         <div class="steps">
+          <div class="step" data-reveal data-delay="0">
+            <div class="step-num" style="background:rgba(168,85,247,0.1);border-color:rgba(168,85,247,0.25);color:#A855F7;">✦</div>
+            <p class="step-text"><strong>Pattern</strong> — something you keep returning to.</p>
+          </div>
           <div class="step" data-reveal data-delay="100">
-            <div class="step-num" style="background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.25);color:#818CF8;">✦</div>
-            <p class="step-text"><strong>Find patterns</strong> across months of thinking.</p>
+            <div class="step-num" style="background:rgba(168,85,247,0.1);border-color:rgba(168,85,247,0.25);color:#A855F7;">✦</div>
+            <p class="step-text"><strong>Contradiction</strong> — something that doesn't add up.</p>
           </div>
           <div class="step" data-reveal data-delay="200">
-            <div class="step-num" style="background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.25);color:#818CF8;">✦</div>
-            <p class="step-text"><strong>Surface ideas</strong> you forgot you had.</p>
-          </div>
-          <div class="step" data-reveal data-delay="300">
-            <div class="step-num" style="background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.25);color:#818CF8;">✦</div>
-            <p class="step-text"><strong>Connect dots</strong> across time automatically.</p>
+            <div class="step-num" style="background:rgba(168,85,247,0.1);border-color:rgba(168,85,247,0.25);color:#A855F7;">✦</div>
+            <p class="step-text"><strong>Question</strong> — worth sitting with.</p>
           </div>
         </div>
       </div>
       <!-- CHAT DEMO -->
-      <div class="chat-demo" id="chatDemo">
-        <div class="chat-bar" id="chatBar">
-          <span class="chat-sparkle">✦</span>
-          <div class="chat-text-area">
-            <span class="chat-ph" id="chatPh">Ask your JOTs anything...</span>
-            <span class="chat-typed" id="chatTyped" style="display:none;"></span>
+      <!-- CHAT DEMO -->
+      <div id="insightDemo" style="opacity:0;transform:translateY(24px);transition:opacity .6s ease .2s,transform .6s ease .2s;">
+
+        <!-- JOT result card -->
+        <div style="background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:22px 24px;margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.25);border-radius:20px;padding:3px 10px;">
+                <span style="font-size:7px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#A855F7;">Thought</span>
+              </div>
+              <span style="font-size:10px;color:var(--muted2);">Today · 09:42</span>
+            </div>
+            <span style="font-size:9px;font-weight:700;color:rgba(168,85,247,0.4);">JOT #42</span>
           </div>
-          <div class="chat-mic">
-            <svg width="10" height="13" viewBox="0 0 48 58" fill="none">
-              <rect x="14" y="2" width="20" height="30" rx="10" fill="#7C3AED"/>
-              <path d="M6 28 Q6 44 24 44 Q42 44 42 28" stroke="#7C3AED" stroke-width="4" fill="none" stroke-linecap="round"/>
-              <line x1="24" y1="44" x2="24" y2="54" stroke="#7C3AED" stroke-width="4" stroke-linecap="round"/>
-            </svg>
-          </div>
+          <h4 style="font-size:16px;font-weight:700;color:white;line-height:1.3;margin-bottom:10px;">Lead with permanent memory, not voice capture</h4>
+          <div style="height:1px;background:var(--border);margin-bottom:10px;"></div>
+          <p style="font-size:12px;color:var(--muted);line-height:1.7;">People don't want voice capture. They want to never lose a thought again. Voice is just how you get there — the fastest path to permanent memory.</p>
         </div>
-        <div class="chat-response" id="chatResponse">
-          <div class="chat-res-header">
-            <span class="chat-res-icon">✦</span>
-            <span class="chat-res-label">AI Insight</span>
+
+        <!-- AI Insight card — glowing, appears after -->
+        <div id="insightCard" style="background:#1A0A2E;border:1px solid rgba(168,85,247,0.4);border-radius:20px;padding:22px 24px;position:relative;overflow:hidden;opacity:0;transform:translateY(8px);transition:opacity .6s ease,transform .6s ease;box-shadow:0 0 40px rgba(168,85,247,0.1);">
+          <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#A855F7,#6366F1,transparent);"></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+            <span style="font-size:14px;color:#A855F7;">✦</span>
+            <span style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#A855F7;">AI Insight</span>
           </div>
-          <p class="chat-res-text">You've dropped <strong>14 JOTs</strong> about distribution in the past 3 weeks. The strongest thread: organic reach through authenticity. You keep returning to one channel as the anchor — and questioning it every time.</p>
-          <div class="chat-jots-ref">
-            <span class="jot-ref">JOT #38</span>
-            <span class="jot-ref">JOT #29</span>
-            <span class="jot-ref">JOT #11</span>
-          </div>
+          <p style="font-size:13px;color:#C4B5FD;line-height:1.75;" id="insightText"></p>
         </div>
+
       </div>
     </div>
   </div>
@@ -1700,38 +1702,34 @@ dampenScrollSpd();
   }
 })();
 
-// ── CHAT DEMO auto-type
-const q="What have I been thinking about most this week?";
-let chatDone=false;
-const chatObs=new IntersectionObserver((entries)=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting&&!chatDone){
-      chatDone=true;
-      document.getElementById('chatDemo').classList.add('visible');
-      setTimeout(runChat,600);
-      chatObs.disconnect();
+// ── INSIGHT DEMO
+const insightFull = "This reframe has appeared in 4 of your last 9 JOTs. You keep circling back to the same positioning question — which suggests it's unresolved. That might be worth sitting with before your next decision.";
+let insightDone = false;
+
+const insightObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting && !insightDone){
+      insightDone = true;
+      const demo = document.getElementById('insightDemo');
+      if(demo){ demo.style.opacity='1'; demo.style.transform='translateY(0)'; }
+      setTimeout(() => {
+        const card = document.getElementById('insightCard');
+        const textEl = document.getElementById('insightText');
+        if(card){ card.style.opacity='1'; card.style.transform='translateY(0)'; }
+        if(textEl){
+          let i = 0;
+          const t = setInterval(() => {
+            if(i < insightFull.length){ textEl.textContent += insightFull[i]; i++; }
+            else clearInterval(t);
+          }, 22);
+        }
+      }, 700);
+      insightObs.disconnect();
     }
   });
-},{threshold:0.4});
-chatObs.observe(document.getElementById('chatDemo'));
-
-function runChat(){
-  const bar=document.getElementById('chatBar');
-  const ph=document.getElementById('chatPh');
-  const typed=document.getElementById('chatTyped');
-  const resp=document.getElementById('chatResponse');
-  bar.classList.add('active');
-  ph.style.display='none';
-  typed.style.display='block';
-  const cursor=document.createElement('span');
-  cursor.className='chat-cursor';
-  typed.appendChild(cursor);
-  let i=0;
-  const t=setInterval(()=>{
-    if(i<q.length){typed.insertBefore(document.createTextNode(q[i]),cursor);i++;}
-    else{clearInterval(t);setTimeout(()=>resp.classList.add('visible'),700);}
-  },42);
-}
+}, {threshold: 0.4});
+const insightEl = document.getElementById('insightDemo');
+if(insightEl) insightObs.observe(insightEl);
 
 // ── SECTION 4: COUNTER
 const s4Section = document.getElementById('s4');
