@@ -919,12 +919,72 @@ footer span:last-child{justify-self:end;}
             </div>
 
             <div style="display:flex;justify-content:space-between;align-items:center;padding:0 14px;margin-bottom:12px;">
-              <span style="font-size:10px;color:rgba(255,255,255,0.35);">100+ JOTs</span>
+              <span style="font-size:10px;color:rgba(255,255,255,0.35);" id="phoneCount">123 JOTs</span>
               <span style="font-size:10px;color:rgba(255,255,255,0.35);">Recent ↓</span>
             </div>
 
             <div class="memory-cards-wrap">
               <div class="sc2-grid" style="grid-template-columns: 1fr 1fr; gap: 8px; padding:0 14px;">
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #65</div>
+                  <div class="sc2-title">I think I work better under pressure but I'm not sure that's healthy</div>
+                  <div class="sc2-foot"><span class="sc2-tag" style="color:#818CF8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.2);">REFLECTION</span><span class="sc2-date">1w ago</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #64</div>
+                  <div class="sc2-title">The onboarding needs to answer one question — what do I do first?</div>
+                  <div class="sc2-foot"><span class="sc2-tag">THOUGHT</span><span class="sc2-date">1w ago</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #63</div>
+                  <div class="sc2-title">Consistency beats intensity every single time</div>
+                  <div class="sc2-foot"><span class="sc2-tag" style="color:#818CF8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.2);">REFLECTION</span><span class="sc2-date">1w ago</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #62</div>
+                  <div class="sc2-title">Stop optimising for the wrong metric. Downloads mean nothing without retention.</div>
+                  <div class="sc2-foot"><span class="sc2-tag">THOUGHT</span><span class="sc2-date">2w ago</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #61</div>
+                  <div class="sc2-title">What would I build if I knew nobody was watching?</div>
+                  <div class="sc2-foot"><span class="sc2-tag" style="color:#818CF8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.2);">REFLECTION</span><span class="sc2-date">2w ago</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #60</div>
+                  <div class="sc2-title">The best products feel inevitable in hindsight</div>
+                  <div class="sc2-foot"><span class="sc2-tag">THOUGHT</span><span class="sc2-date">2w ago</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #59</div>
+                  <div class="sc2-title">I'm more afraid of not starting than of failing</div>
+                  <div class="sc2-foot"><span class="sc2-tag" style="color:#818CF8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.2);">REFLECTION</span><span class="sc2-date">2w ago</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #58</div>
+                  <div class="sc2-title">Talk to users before you build the next feature. Every time.</div>
+                  <div class="sc2-foot"><span class="sc2-tag">THOUGHT</span><span class="sc2-date">3w ago</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #57</div>
+                  <div class="sc2-title">Rest is not the opposite of work. It's part of it.</div>
+                  <div class="sc2-foot"><span class="sc2-tag" style="color:#818CF8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.2);">REFLECTION</span><span class="sc2-date">3w ago</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #56</div>
+                  <div class="sc2-title">Make it easy to share. The product should spread itself.</div>
+                  <div class="sc2-foot"><span class="sc2-tag">THOUGHT</span><span class="sc2-date">3w ago</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #55</div>
+                  <div class="sc2-title">Every founder I admire was also figuring it out as they went</div>
+                  <div class="sc2-foot"><span class="sc2-tag" style="color:#818CF8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.2);">REFLECTION</span><span class="sc2-date">1m ago</span></div>
+                </div>
+                <div class="sc2-card">
+                  <div class="sc2-num">• JOT #54</div>
+                  <div class="sc2-title">The insight layer is what makes JOT different from everything else</div>
+                  <div class="sc2-foot"><span class="sc2-tag">THOUGHT</span><span class="sc2-date">1m ago</span></div>
+                </div>
                 <div class="sc2-card">
                   <div class="sc2-num">• JOT #32</div>
                   <div class="sc2-title">My best ideas always come when I can't write them down</div>
@@ -1746,9 +1806,11 @@ function animateMemCounter(target){
   if(s4CounterDone) return;
   s4CounterDone = true;
   let current = 0;
+  const phoneCountEl = document.getElementById('phoneCount');
   const step = () => {
     current = Math.min(target, current + Math.ceil((target - current) / 8) || 1);
     if(memCounter) memCounter.textContent = current;
+    if(phoneCountEl) phoneCountEl.textContent = current + ' JOTs';
     if(current < target) setTimeout(step, 30);
   };
   step();
@@ -1756,7 +1818,7 @@ function animateMemCounter(target){
 
 const s4CountObs = new IntersectionObserver((entries) => {
   entries.forEach(e => {
-    if(e.isIntersecting) animateMemCounter(77);
+    if(e.isIntersecting) animateMemCounter(123);
   });
 }, {threshold: 0.1});
 if(s4Section) s4CountObs.observe(s4Section);
