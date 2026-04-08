@@ -58,20 +58,7 @@ nav.scrolled{background:rgba(14,14,16,.94);backdrop-filter:blur(24px);border-bot
 .section-sub.visible{opacity:1;transform:translateY(0);}
 .div{height:1px;background:var(--border2);}
 
-/* ── SECTION 1: VOICE FIRST — WAVEFORM ── */
-.s1-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
-.s1-visual{display:flex;flex-direction:column;align-items:center;gap:20px;}
-.s1-glow{position:absolute;right:-100px;top:50%;transform:translateY(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(99,102,241,0.08) 0%,transparent 70%);pointer-events:none;}
-.wave-wrap{width:100%;height:100px;position:relative;opacity:0;transform:translateY(20px);transition:opacity .6s ease .3s,transform .6s ease .3s;}
-.wave-wrap.visible{opacity:1;transform:translateY(0);}
-canvas#waveCanvas{width:100%;height:100%;display:block;}
-.wave-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);text-align:center;}
-.steps{display:flex;flex-direction:column;gap:16px;margin-top:36px;}
-.step{display:flex;align-items:flex-start;gap:14px;opacity:0;transform:translateX(-16px);transition:opacity .45s ease,transform .45s ease;}
-.step.visible{opacity:1;transform:translateX(0);}
-.step-num{width:28px;height:28px;border-radius:50%;background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.25);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#A855F7;flex-shrink:0;margin-top:2px;}
-.step-text{font-size:15px;color:var(--muted);line-height:1.6;}
-.step-text strong{color:white;font-weight:600;}
+
 
 /* ── SECTION 2: APP SHOWCASE ── */
 #showcase-outer,#showcase2-outer{position:relative;}
@@ -279,9 +266,7 @@ footer span:last-child{justify-self:end;}
   .section-title{font-size:clamp(28px,7vw,40px);}
   .section-sub{font-size:16px;}
 
-  /* ── SECTION 1: VOICE FIRST */
-  .s1-layout{grid-template-columns:1fr;gap:40px;}
-  .s1-visual{order:-1;}
+
 
 
 
@@ -589,56 +574,7 @@ footer span:last-child{justify-self:end;}
 </div><!-- /showcase-outer -->
 
 
-<div class="div"></div>
 
-<!-- ══════════════════════════════════════
-     SECTION 1 — VOICE FIRST
-══════════════════════════════════════ -->
-<section class="section" id="s1">
-  <div class="s1-glow"></div>
-  <div class="section-inner">
-    <div class="s1-layout">
-      <div class="s1-copy">
-        <p class="section-eye" data-reveal>Three taps. That's it.</p>
-        <h2 class="section-title" data-reveal>The fastest way<br>to save a thought.<br>Ever.</h2>
-        <p class="section-sub" data-reveal style="margin-bottom:36px;">You've had the idea. You've told yourself you'll remember it. You didn't. JOT removes every obstacle between the thought and the save. Open the app. Tap record. Speak. Done. Whisper transcribes it instantly. The thought is saved before you've even put your phone away.</p>
-        <div class="steps">
-          <div class="step" data-reveal data-delay="100">
-            <div class="step-num">1</div>
-            <p class="step-text"><strong>Open the app</strong> — the mic is the first thing you see</p>
-          </div>
-          <div class="step" data-reveal data-delay="200">
-            <div class="step-num">2</div>
-            <p class="step-text"><strong>Tap and speak</strong> — no typing, no form, no title required</p>
-          </div>
-          <div class="step" data-reveal data-delay="300">
-            <div class="step-num">3</div>
-            <p class="step-text"><strong>Done</strong> — transcribed, structured, and saved in seconds</p>
-          </div>
-        </div>
-      </div>
-      <div class="s1-visual">
-        <p class="wave-label" style="opacity:0.5;">Scroll to drive the waveform</p>
-        <div class="wave-wrap" data-reveal>
-          <canvas id="waveCanvas"></canvas>
-        </div>
-        <!-- Mic visual -->
-        <div style="position:relative;display:flex;align-items:center;justify-content:center;margin-top:8px;">
-          <div id="micRing" style="position:absolute;width:110px;height:110px;border-radius:50%;border:1px solid rgba(168,85,247,0.2);animation:breathe 3s ease-in-out infinite;"></div>
-          <div id="micRing2" style="position:absolute;width:128px;height:128px;border-radius:50%;border:1px solid rgba(168,85,247,0.08);animation:breathe 3s ease-in-out infinite .6s;"></div>
-          <div style="width:92px;height:92px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#2e2e34,#1c1c20);border:2.5px solid #A855F7;display:flex;align-items:center;justify-content:center;">
-            <svg width="34" height="40" viewBox="0 0 48 58" fill="none">
-              <rect x="14" y="2" width="20" height="30" rx="10" fill="#7C3AED"/>
-              <path d="M6 28 Q6 44 24 44 Q42 44 42 28" stroke="#7C3AED" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-              <line x1="24" y1="44" x2="24" y2="54" stroke="#7C3AED" stroke-width="3.5" stroke-linecap="round"/>
-              <line x1="15" y1="54" x2="33" y2="54" stroke="#7C3AED" stroke-width="3.5" stroke-linecap="round"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <div class="div"></div>
 
@@ -1482,52 +1418,19 @@ const revealObs = new IntersectionObserver((entries)=>{
 },{threshold:0.15});
 document.querySelectorAll('[data-reveal]').forEach(el=>revealObs.observe(el));
 
-// ── WAVEFORM
-const canvas=document.getElementById('waveCanvas');
-const ctx=canvas.getContext('2d');
+// ── GLOBAL SCROLL SPEED FOR APP SHOWCASE WAVEFORMS
 let lastSY=0,scrollSpd=0;
-const amps=new Array(60).fill(0.05);
 
-function resizeWave(){
-  const dpr=window.devicePixelRatio||1;
-  canvas.width=canvas.offsetWidth*dpr;
-  canvas.height=canvas.offsetHeight*dpr;
-  ctx.scale(dpr,dpr);
-}
-resizeWave();
-window.addEventListener('resize',resizeWave);
 window.addEventListener('scroll',()=>{
   scrollSpd=Math.min(1,Math.abs(scrollY-lastSY)/40);
   lastSY=scrollY;
 });
 
-function drawWave(){
-  const W=canvas.offsetWidth,H=canvas.offsetHeight;
-  ctx.clearRect(0,0,W,H);
-  const newAmp=Math.max(0.04,scrollSpd+Math.random()*0.04);
-  amps.push(newAmp);
-  if(amps.length>60)amps.shift();
+function dampenScrollSpd(){
   scrollSpd*=0.82;
-  const bw=4,gap=5;
-  const total=Math.floor(W/(bw+gap));
-  for(let i=0;i<total;i++){
-    const ai=amps.length-total+i;
-    const amp=ai>=0?amps[ai]:0.04;
-    const bh=Math.max(5,amp*H*0.88);
-    const x=i*(bw+gap);
-    const top=(H-bh)/2;
-    const gr=ctx.createLinearGradient(0,top+bh,0,top);
-    gr.addColorStop(0,'#6366F1');
-    gr.addColorStop(1,'#A855F7');
-    ctx.beginPath();
-    if(ctx.roundRect)ctx.roundRect(x,top,bw,bh,2);
-    else ctx.rect(x,top,bw,bh);
-    ctx.fillStyle=gr;
-    ctx.fill();
-  }
-  requestAnimationFrame(drawWave);
+  requestAnimationFrame(dampenScrollSpd);
 }
-drawWave();
+dampenScrollSpd();
 
 // ── APP SHOWCASE: 3-state scroll-driven machine
 (function(){
